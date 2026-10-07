@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.11.0
+- Hardcore: ruletka układu — co kilka sekund zmienia się jedna opcja z „Customize Layout” (pasek boczny lewo/prawo, pasek aktywności góra/dół/ukryty, wyrównanie panelu, pasek menu). Wszystko wraca po wyjściu z Hardcore.
+
+
+## 1.10.1
+- Pisk McDonalda wierniejszy: wyższy, przeszywający ton ~2,7 kHz i szybkie piknięcia (jak alarm frytkownicy).
+- Mem „Gratulacje” ma teraz dźwięk: fanfary + to samo piszczenie.
+
+## 1.10.0
+- Hardcore: zapętlony pisk „jak z McDonalda” (syntezowany Web Audio, bez pobierania). Wyłącznik: `trollCode.sound.enabled`.
+- Hardcore: wyskakujące memy „Gratulacje, zostałeś wybrany!” z uciekającym przyciskiem.
+
+## 1.9.0
+- Hardcore: fałszywa konsola ma 5 wariantów (Hacker, Matrix, Crypto Miner, FBI, DOOM), każdy z własnymi kolorami i tekstami.
+- Hardcore: do 100 kopii ikony „Explorer” nawarstwia się w pasku aktywności (30% szansy na sekundę). Znikają po wyjściu z Hardcore.
+
+## 1.8.1
+- Wyjście z trybu Troll (zmiana trybu, PANIC, wyłączenie) cofa teraz wszystkie podmienione znaki we wszystkich plikach, których dotknął. Działa też po restarcie VS Code.
+
 ## 1.8.0
 - Tryb Troll przebudowany na „sneaky”: bez paska statusu, bez powiadomień, bez waifu/trzęsień/chowania panelu i bez skaczącego kursora.
 - Troll: podczas pisania po cichu podmienia pojedyncze znaki na bliźniacze, które łamią składnię (średnik, kropka, nawiasy, znaczniki HTML; czasem litera cyrylicka lub hebrajska). To jedyny efekt zmieniający tekst w pliku — cofalny Ctrl+Z, na dysk po zapisie. Ustawienia: `trollCode.sneaky.chance`, `trollCode.sneaky.intervalSeconds`.

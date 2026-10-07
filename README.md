@@ -36,6 +36,7 @@ The quietest and meanest mode. **No status bar, no notifications, no pop-ups, no
   - Latin letters → identical-looking Cyrillic ones (`a`→`а`, `o`→`о`, `c`→`с`…)
   - and now and then a **Hebrew** letter sneaks into a word
 - The edit is **real** (it changes the document), but **reversible with Ctrl+Z** and only reaches disk when you save. It happens rarely — about one swap every 12 seconds at most, so it's hard to catch.
+- ↩️ **Auto-revert**: when you leave Troll mode (switch mode, disable, or PANIC) every character the extension swapped is **put back automatically**, in all files it touched. This works even after closing and reopening VS Code. (Characters you already saved to disk are restored the next time the files are opened and reverted; if you git-committed them in between, that commit still has them.)
 
 > ⚠️ This is the one mode that modifies your code. Use it as a prank on someone who's in on the joke, not on real work you care about.
 
@@ -57,7 +58,11 @@ Everything from Troll Mode, turned up, **plus**:
 - 🔴 **Fake breakpoints**: red dots pop up on random lines and vanish a few seconds later. They are never added while you are debugging, never placed on a line that already has your breakpoint, and only the extension's own dots are removed
 - 🤡 Emoji at the end of every line
 - 👻 **Ghost comments** like `// TODO: zmień zawód` ("change careers") appear and fade
-- 💀 **Fake hacker terminal**: green Matrix rain, *"Hacking NASA…"*, *"ACCESS GRANTED"*
+- 💀 **Fake hacker terminal**: five random themes — Hacker, Matrix, Crypto Miner, FBI and DOOM — each with its own colors and lines. Pure animated text, runs nothing
+- 🧱 **Explorer stack**: up to 100 fake "Explorer" icons pile up in the activity bar (they disappear when you leave Hardcore)
+- 🔊 **Beeping**: a looping McDonald's-style beep plays in the background (synthesized in a webview — no audio is downloaded; turn it off with `trollCode.sound.enabled`)
+- 🎉 **Fake prize pop-ups**: *"Congratulations, you've been selected as the 1,000,000th programmer!"* windows with a button that runs away from your cursor
+- 🔀 **Layout roulette**: every few seconds one layout option changes on its own — side bar moves left/right, activity bar jumps to the top/bottom/hides, panel re-aligns, menu bar changes. All of it is restored when you leave Hardcore
 - 📳 Stronger, more frequent screen shakes (about every 4 seconds)
 - 💖 Waifus multiply (up to 4 tabs at once)
 - 📢 Notification spam, fake scary progress bars (*"Formatting drive C:…"*) and quizzes
@@ -138,7 +143,7 @@ You will see both windows again:
 **Can it break my project or delete my code?**
 In **Legit** and **Hardcore** mode, no — everything there is drawn **on top of** VS Code (colors, underlines, emoji, the cat, the "corrupted" files), and nothing is written to your files.
 
-**Troll mode is different.** It intentionally edits your open file as you type, swapping single characters for look-alikes that break the syntax. It never adds or deletes files, every change is undoable with Ctrl+Z, and nothing reaches disk until you save — but if you save and commit without noticing, the broken characters go with it. Only use Troll mode on code you don't mind getting pranked.
+**Troll mode is different.** It intentionally edits your open file as you type, swapping single characters for look-alikes that break the syntax. It never adds or deletes files, every change is undoable with Ctrl+Z, and nothing reaches disk until you save. **When you turn Troll mode off, every swap it made is reverted automatically** (even across a restart). The only way a broken character sticks around is if you save and git-commit it before turning Troll off — so only use Troll mode on code you don't mind getting pranked.
 
 **What about the "corrupted" files and the 💀 marks?**
 They are fake. The corrupted files exist only as items in a list inside VS Code, and clicking one opens a read-only preview of random characters. The 💀 next to your real files is only a color and an icon. No file is created, renamed, moved or deleted. `git status` stays clean.
@@ -160,6 +165,12 @@ No. Fake breakpoints are only added when **no debug session is running**, so the
 
 **Is the blue screen real?**
 No. It's an editor tab that looks like a Windows BSOD. Nothing crashes and nothing restarts. It closes on its own after ~12 seconds, or you can close it like any tab.
+
+**Where does the beeping sound come from? Is it a download?**
+No download, and no copyrighted audio is bundled. The McDonald's-style beep is **generated live** with the Web Audio API (a ~2.7 kHz square-wave tone, pulsed quickly) inside a small webview tab. It only plays in Hardcore mode, you can turn it off with `trollCode.sound.enabled`, and **Ctrl+Alt+Shift+P silences it instantly** (the tab is closed). The fake prize pop-up makes the same kind of synthesized sound.
+
+**Are the "Congratulations, you've been selected" windows real? Do they collect anything?**
+No. They are static webview tabs with a joke message and a button that runs away from your cursor. They have **no form, no input and no link** — nothing is submitted, nothing is collected, and the button does nothing. The panel even says it's a joke. Close it like any tab, or press PANIC.
 
 **Does it send my code anywhere?**
 No. The only internet access is downloading SFW anime pictures for the waifu effect (Troll and Hardcore only). Those requests contain no code, no file names and no personal data. Legit mode makes **no network requests at all**.

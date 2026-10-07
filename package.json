@@ -2,15 +2,33 @@
   "name": "troll-code",
   "displayName": "Troll Code 🤡",
   "description": "A prank extension for VS Code with three modes: Legit (light jokes), Troll (annoying) and opt-in Hardcore (pure chaos). Never edits your files. Panic button: Ctrl+Alt+Shift+P.",
-  "version": "1.8.0",
+  "version": "1.11.0",
   "publisher": "bochenek11",
   "icon": "icon.png",
   "license": "MIT",
-  "repository": { "type": "git", "url": "https://github.com/Bochenek11/troll-code.git" },
-  "engines": { "vscode": "^1.90.0" },
-  "categories": ["Other"],
-  "keywords": ["troll", "prank", "fun", "joke", "meme", "waifu", "rainbow", "chaos"],
-  "activationEvents": ["onStartupFinished"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bochenek11/troll-code.git"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "troll",
+    "prank",
+    "fun",
+    "joke",
+    "meme",
+    "waifu",
+    "rainbow",
+    "chaos"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./extension.js",
   "scripts": {
     "package": "npx @vscode/vsce package --no-dependencies --allow-missing-repository",
@@ -18,26 +36,1262 @@
   },
   "contributes": {
     "commands": [
-      { "command": "trollCode.switchMode", "title": "Troll Code: Wybierz tryb (Legit / Troll / Hardcore)" },
-      { "command": "trollCode.toggle", "title": "Troll Code: Włącz/wyłącz trolling" },
-      { "command": "trollCode.rainbowToggle", "title": "Troll Code: 🌈 Tryb tęczowy HARDKOR (włącz/wyłącz)" },
-      { "command": "trollCode.panic", "title": "Troll Code: 🛑 PANIC — wyłącz wszystko" },
-      { "command": "trollCode.trollNow", "title": "Troll Code: Trolluj mnie teraz" },
-      { "command": "trollCode.shakeNow", "title": "Troll Code: Trzęsienie ekranu teraz" },
-      { "command": "trollCode.waifuNow", "title": "Troll Code: Pokaż waifu teraz" },
-      { "command": "trollCode.bsodNow", "title": "Troll Code: Niebieski ekran (BSOD) teraz" }
+      {
+        "command": "trollCode.switchMode",
+        "title": "Troll Code: Wybierz tryb (Legit / Troll / Hardcore)"
+      },
+      {
+        "command": "trollCode.toggle",
+        "title": "Troll Code: Włącz/wyłącz trolling"
+      },
+      {
+        "command": "trollCode.rainbowToggle",
+        "title": "Troll Code: 🌈 Tryb tęczowy HARDKOR (włącz/wyłącz)"
+      },
+      {
+        "command": "trollCode.panic",
+        "title": "Troll Code: 🛑 PANIC — wyłącz wszystko"
+      },
+      {
+        "command": "trollCode.trollNow",
+        "title": "Troll Code: Trolluj mnie teraz"
+      },
+      {
+        "command": "trollCode.shakeNow",
+        "title": "Troll Code: Trzęsienie ekranu teraz"
+      },
+      {
+        "command": "trollCode.waifuNow",
+        "title": "Troll Code: Pokaż waifu teraz"
+      },
+      {
+        "command": "trollCode.bsodNow",
+        "title": "Troll Code: Niebieski ekran (BSOD) teraz"
+      }
     ],
     "viewsContainers": {
       "activitybar": [
-        { "id": "trollExplorer", "title": "Explorer", "icon": "media/explorer.svg" }
+        {
+          "id": "trollExplorer",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack0",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack1",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack2",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack3",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack4",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack5",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack6",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack7",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack8",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack9",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack10",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack11",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack12",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack13",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack14",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack15",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack16",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack17",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack18",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack19",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack20",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack21",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack22",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack23",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack24",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack25",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack26",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack27",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack28",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack29",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack30",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack31",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack32",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack33",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack34",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack35",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack36",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack37",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack38",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack39",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack40",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack41",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack42",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack43",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack44",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack45",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack46",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack47",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack48",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack49",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack50",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack51",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack52",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack53",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack54",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack55",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack56",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack57",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack58",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack59",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack60",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack61",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack62",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack63",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack64",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack65",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack66",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack67",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack68",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack69",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack70",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack71",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack72",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack73",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack74",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack75",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack76",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack77",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack78",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack79",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack80",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack81",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack82",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack83",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack84",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack85",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack86",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack87",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack88",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack89",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack90",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack91",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack92",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack93",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack94",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack95",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack96",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack97",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack98",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        },
+        {
+          "id": "trollStack99",
+          "title": "Explorer",
+          "icon": "media/explorer.svg"
+        }
       ]
     },
     "views": {
       "explorer": [
-        { "id": "trollCode.fakeFiles", "name": "💀 Uszkodzone pliki", "when": "trollCode.hardcore" }
+        {
+          "id": "trollCode.fakeFiles",
+          "name": "💀 Uszkodzone pliki",
+          "when": "trollCode.hardcore"
+        }
       ],
       "trollExplorer": [
-        { "id": "trollCode.fakeExplorer", "name": "Projekt", "when": "trollCode.hardcore" }
+        {
+          "id": "trollCode.fakeExplorer",
+          "name": "Projekt",
+          "when": "trollCode.hardcore"
+        }
+      ],
+      "trollStack0": [
+        {
+          "id": "trollCode.stack.0",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.0"
+        }
+      ],
+      "trollStack1": [
+        {
+          "id": "trollCode.stack.1",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.1"
+        }
+      ],
+      "trollStack2": [
+        {
+          "id": "trollCode.stack.2",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.2"
+        }
+      ],
+      "trollStack3": [
+        {
+          "id": "trollCode.stack.3",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.3"
+        }
+      ],
+      "trollStack4": [
+        {
+          "id": "trollCode.stack.4",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.4"
+        }
+      ],
+      "trollStack5": [
+        {
+          "id": "trollCode.stack.5",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.5"
+        }
+      ],
+      "trollStack6": [
+        {
+          "id": "trollCode.stack.6",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.6"
+        }
+      ],
+      "trollStack7": [
+        {
+          "id": "trollCode.stack.7",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.7"
+        }
+      ],
+      "trollStack8": [
+        {
+          "id": "trollCode.stack.8",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.8"
+        }
+      ],
+      "trollStack9": [
+        {
+          "id": "trollCode.stack.9",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.9"
+        }
+      ],
+      "trollStack10": [
+        {
+          "id": "trollCode.stack.10",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.10"
+        }
+      ],
+      "trollStack11": [
+        {
+          "id": "trollCode.stack.11",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.11"
+        }
+      ],
+      "trollStack12": [
+        {
+          "id": "trollCode.stack.12",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.12"
+        }
+      ],
+      "trollStack13": [
+        {
+          "id": "trollCode.stack.13",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.13"
+        }
+      ],
+      "trollStack14": [
+        {
+          "id": "trollCode.stack.14",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.14"
+        }
+      ],
+      "trollStack15": [
+        {
+          "id": "trollCode.stack.15",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.15"
+        }
+      ],
+      "trollStack16": [
+        {
+          "id": "trollCode.stack.16",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.16"
+        }
+      ],
+      "trollStack17": [
+        {
+          "id": "trollCode.stack.17",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.17"
+        }
+      ],
+      "trollStack18": [
+        {
+          "id": "trollCode.stack.18",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.18"
+        }
+      ],
+      "trollStack19": [
+        {
+          "id": "trollCode.stack.19",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.19"
+        }
+      ],
+      "trollStack20": [
+        {
+          "id": "trollCode.stack.20",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.20"
+        }
+      ],
+      "trollStack21": [
+        {
+          "id": "trollCode.stack.21",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.21"
+        }
+      ],
+      "trollStack22": [
+        {
+          "id": "trollCode.stack.22",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.22"
+        }
+      ],
+      "trollStack23": [
+        {
+          "id": "trollCode.stack.23",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.23"
+        }
+      ],
+      "trollStack24": [
+        {
+          "id": "trollCode.stack.24",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.24"
+        }
+      ],
+      "trollStack25": [
+        {
+          "id": "trollCode.stack.25",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.25"
+        }
+      ],
+      "trollStack26": [
+        {
+          "id": "trollCode.stack.26",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.26"
+        }
+      ],
+      "trollStack27": [
+        {
+          "id": "trollCode.stack.27",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.27"
+        }
+      ],
+      "trollStack28": [
+        {
+          "id": "trollCode.stack.28",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.28"
+        }
+      ],
+      "trollStack29": [
+        {
+          "id": "trollCode.stack.29",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.29"
+        }
+      ],
+      "trollStack30": [
+        {
+          "id": "trollCode.stack.30",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.30"
+        }
+      ],
+      "trollStack31": [
+        {
+          "id": "trollCode.stack.31",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.31"
+        }
+      ],
+      "trollStack32": [
+        {
+          "id": "trollCode.stack.32",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.32"
+        }
+      ],
+      "trollStack33": [
+        {
+          "id": "trollCode.stack.33",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.33"
+        }
+      ],
+      "trollStack34": [
+        {
+          "id": "trollCode.stack.34",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.34"
+        }
+      ],
+      "trollStack35": [
+        {
+          "id": "trollCode.stack.35",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.35"
+        }
+      ],
+      "trollStack36": [
+        {
+          "id": "trollCode.stack.36",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.36"
+        }
+      ],
+      "trollStack37": [
+        {
+          "id": "trollCode.stack.37",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.37"
+        }
+      ],
+      "trollStack38": [
+        {
+          "id": "trollCode.stack.38",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.38"
+        }
+      ],
+      "trollStack39": [
+        {
+          "id": "trollCode.stack.39",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.39"
+        }
+      ],
+      "trollStack40": [
+        {
+          "id": "trollCode.stack.40",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.40"
+        }
+      ],
+      "trollStack41": [
+        {
+          "id": "trollCode.stack.41",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.41"
+        }
+      ],
+      "trollStack42": [
+        {
+          "id": "trollCode.stack.42",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.42"
+        }
+      ],
+      "trollStack43": [
+        {
+          "id": "trollCode.stack.43",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.43"
+        }
+      ],
+      "trollStack44": [
+        {
+          "id": "trollCode.stack.44",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.44"
+        }
+      ],
+      "trollStack45": [
+        {
+          "id": "trollCode.stack.45",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.45"
+        }
+      ],
+      "trollStack46": [
+        {
+          "id": "trollCode.stack.46",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.46"
+        }
+      ],
+      "trollStack47": [
+        {
+          "id": "trollCode.stack.47",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.47"
+        }
+      ],
+      "trollStack48": [
+        {
+          "id": "trollCode.stack.48",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.48"
+        }
+      ],
+      "trollStack49": [
+        {
+          "id": "trollCode.stack.49",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.49"
+        }
+      ],
+      "trollStack50": [
+        {
+          "id": "trollCode.stack.50",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.50"
+        }
+      ],
+      "trollStack51": [
+        {
+          "id": "trollCode.stack.51",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.51"
+        }
+      ],
+      "trollStack52": [
+        {
+          "id": "trollCode.stack.52",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.52"
+        }
+      ],
+      "trollStack53": [
+        {
+          "id": "trollCode.stack.53",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.53"
+        }
+      ],
+      "trollStack54": [
+        {
+          "id": "trollCode.stack.54",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.54"
+        }
+      ],
+      "trollStack55": [
+        {
+          "id": "trollCode.stack.55",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.55"
+        }
+      ],
+      "trollStack56": [
+        {
+          "id": "trollCode.stack.56",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.56"
+        }
+      ],
+      "trollStack57": [
+        {
+          "id": "trollCode.stack.57",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.57"
+        }
+      ],
+      "trollStack58": [
+        {
+          "id": "trollCode.stack.58",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.58"
+        }
+      ],
+      "trollStack59": [
+        {
+          "id": "trollCode.stack.59",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.59"
+        }
+      ],
+      "trollStack60": [
+        {
+          "id": "trollCode.stack.60",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.60"
+        }
+      ],
+      "trollStack61": [
+        {
+          "id": "trollCode.stack.61",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.61"
+        }
+      ],
+      "trollStack62": [
+        {
+          "id": "trollCode.stack.62",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.62"
+        }
+      ],
+      "trollStack63": [
+        {
+          "id": "trollCode.stack.63",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.63"
+        }
+      ],
+      "trollStack64": [
+        {
+          "id": "trollCode.stack.64",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.64"
+        }
+      ],
+      "trollStack65": [
+        {
+          "id": "trollCode.stack.65",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.65"
+        }
+      ],
+      "trollStack66": [
+        {
+          "id": "trollCode.stack.66",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.66"
+        }
+      ],
+      "trollStack67": [
+        {
+          "id": "trollCode.stack.67",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.67"
+        }
+      ],
+      "trollStack68": [
+        {
+          "id": "trollCode.stack.68",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.68"
+        }
+      ],
+      "trollStack69": [
+        {
+          "id": "trollCode.stack.69",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.69"
+        }
+      ],
+      "trollStack70": [
+        {
+          "id": "trollCode.stack.70",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.70"
+        }
+      ],
+      "trollStack71": [
+        {
+          "id": "trollCode.stack.71",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.71"
+        }
+      ],
+      "trollStack72": [
+        {
+          "id": "trollCode.stack.72",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.72"
+        }
+      ],
+      "trollStack73": [
+        {
+          "id": "trollCode.stack.73",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.73"
+        }
+      ],
+      "trollStack74": [
+        {
+          "id": "trollCode.stack.74",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.74"
+        }
+      ],
+      "trollStack75": [
+        {
+          "id": "trollCode.stack.75",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.75"
+        }
+      ],
+      "trollStack76": [
+        {
+          "id": "trollCode.stack.76",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.76"
+        }
+      ],
+      "trollStack77": [
+        {
+          "id": "trollCode.stack.77",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.77"
+        }
+      ],
+      "trollStack78": [
+        {
+          "id": "trollCode.stack.78",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.78"
+        }
+      ],
+      "trollStack79": [
+        {
+          "id": "trollCode.stack.79",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.79"
+        }
+      ],
+      "trollStack80": [
+        {
+          "id": "trollCode.stack.80",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.80"
+        }
+      ],
+      "trollStack81": [
+        {
+          "id": "trollCode.stack.81",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.81"
+        }
+      ],
+      "trollStack82": [
+        {
+          "id": "trollCode.stack.82",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.82"
+        }
+      ],
+      "trollStack83": [
+        {
+          "id": "trollCode.stack.83",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.83"
+        }
+      ],
+      "trollStack84": [
+        {
+          "id": "trollCode.stack.84",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.84"
+        }
+      ],
+      "trollStack85": [
+        {
+          "id": "trollCode.stack.85",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.85"
+        }
+      ],
+      "trollStack86": [
+        {
+          "id": "trollCode.stack.86",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.86"
+        }
+      ],
+      "trollStack87": [
+        {
+          "id": "trollCode.stack.87",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.87"
+        }
+      ],
+      "trollStack88": [
+        {
+          "id": "trollCode.stack.88",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.88"
+        }
+      ],
+      "trollStack89": [
+        {
+          "id": "trollCode.stack.89",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.89"
+        }
+      ],
+      "trollStack90": [
+        {
+          "id": "trollCode.stack.90",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.90"
+        }
+      ],
+      "trollStack91": [
+        {
+          "id": "trollCode.stack.91",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.91"
+        }
+      ],
+      "trollStack92": [
+        {
+          "id": "trollCode.stack.92",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.92"
+        }
+      ],
+      "trollStack93": [
+        {
+          "id": "trollCode.stack.93",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.93"
+        }
+      ],
+      "trollStack94": [
+        {
+          "id": "trollCode.stack.94",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.94"
+        }
+      ],
+      "trollStack95": [
+        {
+          "id": "trollCode.stack.95",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.95"
+        }
+      ],
+      "trollStack96": [
+        {
+          "id": "trollCode.stack.96",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.96"
+        }
+      ],
+      "trollStack97": [
+        {
+          "id": "trollCode.stack.97",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.97"
+        }
+      ],
+      "trollStack98": [
+        {
+          "id": "trollCode.stack.98",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.98"
+        }
+      ],
+      "trollStack99": [
+        {
+          "id": "trollCode.stack.99",
+          "name": "Projekt",
+          "when": "trollCode.stackVisible.99"
+        }
       ]
     },
     "keybindings": [
@@ -56,26 +1310,126 @@
     "configuration": {
       "title": "Troll Code",
       "properties": {
-        "trollCode.enabled": { "type": "boolean", "default": true, "description": "Główny włącznik wszystkich efektów." },
-        "trollCode.mode": { "type": "string", "enum": ["legit", "troll"], "enumDescriptions": ["😇 Legit: lekkie żarty, które nie przeszkadzają w pracy (komentarze, fałszywy postęp, komentarze przy zapisie, żartobliwe podpowiedzi).", "🤡 Troll: SNEAKY. Bez paska statusu i bez powiadomień. Podczas pisania po cichu psuje składnię (średnik, kropka, nawiasy, znaczniki HTML na bliźniacze znaki; czasem litera hebrajska). Zmienia tekst w pliku — cofniesz Ctrl+Z, na dysk trafia po zapisie."], "default": "legit", "description": "Tryb trollingu. Hardcore włącza się osobno (trollCode.rainbowMode.enabled) i wymaga potwierdzenia." },
-        "trollCode.rainbowMode.enabled": { "type": "boolean", "default": false, "description": "☠️ Tryb Hardcore: totalny chaos (tęczowy tekst, zamykanie kart, ruletka motywów, kot, fałszywe błędy i dużo więcej, pełna lista w README). Przed włączeniem trzeba potwierdzić ostrzeżenie. Zmienione ustawienia wracają po wyłączeniu. PANIC: Ctrl+Alt+Shift+P." },
-        "trollCode.messages.enabled": { "type": "boolean", "default": true, "description": "Losowe złośliwe komentarze w powiadomieniach." },
-        "trollCode.messages.intervalMinutes": { "type": "number", "default": 2, "minimum": 0.25, "description": "Co ile minut (średnio) pojawia się komentarz." },
-        "trollCode.statusBar.enabled": { "type": "boolean", "default": true, "description": "Fałszywy pasek postępu w pasku statusu." },
-        "trollCode.onSave.enabled": { "type": "boolean", "default": true, "description": "Komentarze przy zapisie pliku." },
-        "trollCode.onSave.chance": { "type": "number", "default": 0.4, "minimum": 0, "maximum": 1, "description": "Szansa na komentarz przy zapisie (0–1)." },
-        "trollCode.sneaky.chance": { "type": "number", "default": 0.5, "minimum": 0, "maximum": 1, "description": "[tryb Troll] Szansa na jedną podmianę znaku po przerwie w pisaniu (0–1)." },
-        "trollCode.sneaky.intervalSeconds": { "type": "number", "default": 12, "minimum": 1, "description": "[tryb Troll] Minimalny odstęp (s) między podmianami znaków." },
-        "trollCode.fakeWarnings.enabled": { "type": "boolean", "default": true, "description": "Żartobliwe podpowiedzi (Information) na losowych linijkach. Znikają same." },
-        "trollCode.sassyUndo.enabled": { "type": "boolean", "default": true, "description": "[tylko tryb Troll] Ctrl+Z czasem najpierw mówi „Nie.” (i tak cofa)." },
-        "trollCode.cursorJump.enabled": { "type": "boolean", "default": true, "description": "[tylko tryb Troll] Kursor czasem ucieka o linijkę." },
-        "trollCode.cursorJump.chance": { "type": "number", "default": 0.03, "minimum": 0, "maximum": 0.2, "description": "Szansa na ucieczkę kursora przy każdym ruchu (0–0.2)." },
-        "trollCode.shake.enabled": { "type": "boolean", "default": true, "description": "[tylko tryb Troll] Losowe trzęsienie ekranu." },
-        "trollCode.shake.intervalMinutes": { "type": "number", "default": 3, "minimum": 0.25, "description": "Co ile minut (średnio) trzęsie ekranem." },
-        "trollCode.waifu.enabled": { "type": "boolean", "default": true, "description": "[tylko tryb Troll] Losowo otwiera kartę z obrazkiem anime waifu (SFW, z nekos.best / api.waifu.pics / api.waifu.im — wymaga internetu)." },
-        "trollCode.waifu.intervalMinutes": { "type": "number", "default": 5, "minimum": 0.25, "description": "Co ile minut (średnio) pojawia się waifu." },
-        "trollCode.hideSidebar.enabled": { "type": "boolean", "default": true, "description": "[tylko tryb Troll] Co kilka sekund chowa panel boczny (Explorer, Extensions itd.)." },
-        "trollCode.hideSidebar.intervalSeconds": { "type": "number", "default": 8, "minimum": 1, "description": "Co ile sekund chować panel boczny." }
+        "trollCode.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Główny włącznik wszystkich efektów."
+        },
+        "trollCode.mode": {
+          "type": "string",
+          "enum": [
+            "legit",
+            "troll"
+          ],
+          "enumDescriptions": [
+            "😇 Legit: lekkie żarty, które nie przeszkadzają w pracy (komentarze, fałszywy postęp, komentarze przy zapisie, żartobliwe podpowiedzi).",
+            "🤡 Troll: SNEAKY. Bez paska statusu i bez powiadomień. Podczas pisania po cichu psuje składnię (średnik, kropka, nawiasy, znaczniki HTML na bliźniacze znaki; czasem litera hebrajska). Zmienia tekst w pliku — cofniesz Ctrl+Z, na dysk trafia po zapisie."
+          ],
+          "default": "legit",
+          "description": "Tryb trollingu. Hardcore włącza się osobno (trollCode.rainbowMode.enabled) i wymaga potwierdzenia."
+        },
+        "trollCode.rainbowMode.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "☠️ Tryb Hardcore: totalny chaos (tęczowy tekst, zamykanie kart, ruletka motywów, kot, fałszywe błędy i dużo więcej, pełna lista w README). Przed włączeniem trzeba potwierdzić ostrzeżenie. Zmienione ustawienia wracają po wyłączeniu. PANIC: Ctrl+Alt+Shift+P."
+        },
+        "trollCode.messages.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Losowe złośliwe komentarze w powiadomieniach."
+        },
+        "trollCode.messages.intervalMinutes": {
+          "type": "number",
+          "default": 2,
+          "minimum": 0.25,
+          "description": "Co ile minut (średnio) pojawia się komentarz."
+        },
+        "trollCode.statusBar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Fałszywy pasek postępu w pasku statusu."
+        },
+        "trollCode.onSave.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Komentarze przy zapisie pliku."
+        },
+        "trollCode.onSave.chance": {
+          "type": "number",
+          "default": 0.4,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Szansa na komentarz przy zapisie (0–1)."
+        },
+        "trollCode.sneaky.chance": {
+          "type": "number",
+          "default": 0.5,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "[tryb Troll] Szansa na jedną podmianę znaku po przerwie w pisaniu (0–1)."
+        },
+        "trollCode.sneaky.intervalSeconds": {
+          "type": "number",
+          "default": 12,
+          "minimum": 1,
+          "description": "[tryb Troll] Minimalny odstęp (s) między podmianami znaków."
+        },
+        "trollCode.sound.enabled": { "type": "boolean", "default": true, "description": "[tryb Hardcore] Zapętlony pisk „jak z McDonalda” (syntezowany, bez pobierania). Otwiera cichą kartę webview, bo tylko tak VS Code może odtwarzać dźwięk." },
+        "trollCode.fakeWarnings.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Żartobliwe podpowiedzi (Information) na losowych linijkach. Znikają same."
+        },
+        "trollCode.sassyUndo.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "[tylko tryb Troll] Ctrl+Z czasem najpierw mówi „Nie.” (i tak cofa)."
+        },
+        "trollCode.cursorJump.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "[tylko tryb Troll] Kursor czasem ucieka o linijkę."
+        },
+        "trollCode.cursorJump.chance": {
+          "type": "number",
+          "default": 0.03,
+          "minimum": 0,
+          "maximum": 0.2,
+          "description": "Szansa na ucieczkę kursora przy każdym ruchu (0–0.2)."
+        },
+        "trollCode.shake.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "[tylko tryb Troll] Losowe trzęsienie ekranu."
+        },
+        "trollCode.shake.intervalMinutes": {
+          "type": "number",
+          "default": 3,
+          "minimum": 0.25,
+          "description": "Co ile minut (średnio) trzęsie ekranem."
+        },
+        "trollCode.waifu.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "[tylko tryb Troll] Losowo otwiera kartę z obrazkiem anime waifu (SFW, z nekos.best / api.waifu.pics / api.waifu.im — wymaga internetu)."
+        },
+        "trollCode.waifu.intervalMinutes": {
+          "type": "number",
+          "default": 5,
+          "minimum": 0.25,
+          "description": "Co ile minut (średnio) pojawia się waifu."
+        },
+        "trollCode.hideSidebar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "[tylko tryb Troll] Co kilka sekund chowa panel boczny (Explorer, Extensions itd.)."
+        },
+        "trollCode.hideSidebar.intervalSeconds": {
+          "type": "number",
+          "default": 8,
+          "minimum": 1,
+          "description": "Co ile sekund chować panel boczny."
+        }
       }
     }
   }

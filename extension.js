@@ -78,6 +78,8 @@ const RAINBOW = {
   themeMs: 3000,
   spamMs: 12000,
   scareMs: 40000,
+  congratsMs: 35000,
+  layoutMs: 7000,
   quizMs: 30000,
   hideSidebarMs: 2000,
   fontPulseMs: 1500,
@@ -188,17 +190,74 @@ const WINDOW_TITLES = [
   'Steam — 1 247 h w CS', 'PowerPoint — prezentacja_na_jutro_FINAL_v7.pptx', 'Zoom — spotkanie z szefem',
 ];
 
-const HACKER_LINES = [
-  'Connecting to NASA mainframe…', 'Bypassing firewall (very hard)…', 'Downloading more RAM…',
-  'Decrypting password: hunter2…', 'Injecting SQL into the coffee machine…', 'Hacking the Pentagon (again)…',
-  'Uploading virus to Minecraft server…', 'Rerouting through 7 proxies…', 'Enhancing… enhance… ENHANCE…',
-  'Stealing Wi-Fi from neighbour…', 'Compiling hacker voice…',
+// Warianty konsoli: każdy ma swój tytuł, kolor, pulę tekstów, zestaw znaków i finał.
+// Wszystko to tylko animowany tekst — żadnych komend.
+const TERMINAL_THEMES = [
+  {
+    name: '💀 H4CK3R', color: 32, charset: '01アイウエオカキクケコABCDEF0123456789#$%&',
+    header: '💀 H4CK3R CONSOLE v13.37 💀',
+    lines: [
+      'Connecting to NASA mainframe…', 'Bypassing firewall (very hard)…', 'Downloading more RAM…',
+      'Decrypting password: hunter2…', 'Injecting SQL into the coffee machine…', 'Hacking the Pentagon (again)…',
+      'Uploading virus to Minecraft server…', 'Rerouting through 7 proxies…', 'Enhancing… enhance… ENHANCE…',
+      'Stealing Wi-Fi from neighbour…', 'Compiling hacker voice…',
+    ],
+    finale: ['\x1b[1;5;31m  ██ ACCESS GRANTED ██  \x1b[0m', '  Just kidding. Nothing was hacked. 🤡'],
+  },
+  {
+    name: '🟩 MATRIX', color: 32, charset: 'ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜｵｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ01',
+    header: 'Wake up, Neo…',
+    lines: [
+      'The Matrix has you…', 'Following the white rabbit…', 'Knock, knock, Neo.',
+      'There is no spoon.', 'Loading red pill…', 'Dodging bullets (slowly)…', 'Agent Smith is near…',
+    ],
+    finale: ['\x1b[1;32m  Welcome to the real world.\x1b[0m', '  Żart 🤡 To tylko tekst.'],
+  },
+  {
+    name: '₿ MINER', color: 33, charset: '₿0123456789ABCDEF',
+    header: '₿ CRYPTO MINER PRO — zarabiaj na cudzym CPU ₿',
+    lines: [
+      'Mining Bitcoin on your fridge…', 'Hash rate: 3 H/s (świetnie)…', 'Found block! …nie, to był kurz.',
+      'Selling your GPU to the dark web…', 'Overheating CPU to 300°C…', 'Wallet balance: 0.00000001 BTC…',
+      'Zamieniam prąd rodziców na krypto…',
+    ],
+    finale: ['\x1b[1;33m  MINED: 0.00 BTC. Rachunek za prąd: 999 zł.\x1b[0m', '  Żart 🤡 Nic nie kopałem.'],
+  },
+  {
+    name: '🚨 FBI', color: 31, charset: '█▓▒░ABCDEF0123456789',
+    header: '🚨 FBI — OPEN UP 🚨',
+    lines: [
+      'Triangulating your IP…', 'Location: za komputerem…', 'Analizuję historię przeglądarki…',
+      'Licząc memy na dysku…', 'Mandat za zły wcięcia kodu…', 'Wysyłam agentów (pieszo)…',
+      'Twój kot też jest podejrzany…',
+    ],
+    finale: ['\x1b[1;5;31m  ██ YOU ARE SURROUNDED ██\x1b[0m', '  Żart 🤡 Nikt po ciebie nie jedzie.'],
+  },
+  {
+    name: '🕹️ DOOM', color: 31, charset: '▀▄█▓▒░',
+    header: 'DOOM.EXE — rip and tear',
+    lines: [
+      'Spawning demons in node_modules…', 'Ammo: 0. Problemy: 9999…', 'BFG ładuje się…',
+      'Boss: Twój dług techniczny (HP 999999)…', 'Szukam wyjścia z legacy code…',
+    ],
+    finale: ['\x1b[1;31m  GAME OVER. Insert coin.\x1b[0m', '  Żart 🤡 Konsola znika.'],
+  },
 ];
 
 // Ustawienia, które hardkor zmienia — oryginały wracają po wyłączeniu.
 const CHAOS_SETTINGS = [
   'workbench.colorTheme', 'editor.fontSize', 'editor.fontFamily', 'editor.lineNumbers',
   'editor.minimap.enabled', 'editor.cursorStyle', 'editor.cursorBlinking', 'window.title',
+  'workbench.sideBar.location', 'workbench.activityBar.location',
+  'workbench.panel.alignment', 'window.menuBarVisibility',
+];
+
+// Losowy układ (opcje z menu „Customize Layout”). Ustawienia, więc wracają po wyłączeniu.
+const LAYOUT_OPTIONS = [
+  { key: 'workbench.sideBar.location', values: ['left', 'right'] },
+  { key: 'workbench.activityBar.location', values: ['default', 'top', 'bottom', 'hidden'] },
+  { key: 'workbench.panel.alignment', values: ['center', 'left', 'right', 'justify'] },
+  { key: 'window.menuBarVisibility', values: ['classic', 'compact', 'hidden'] },
 ];
 
 const HARDCORE_TITLE = '⚠️ Enable HARDCORE mode?';
@@ -224,12 +283,17 @@ const HARDCORE_DETAIL = `This is a prank mode. It will deliberately make VS Code
 • Fake blue screen of death (BSOD) covering the editor for a few seconds
 • Fake red breakpoints appear and disappear on random lines (never while you are debugging; only the extension's own breakpoints are removed)
 • Instantly closes its own "Extension: Troll Code" page when you open it (to make it harder to uninstall; use Ctrl+Alt+Shift+P or the terminal instead)
+• Stacks up to 100 fake "Explorer" icons in the activity bar
+• Plays a looping McDonald's-style beeping sound (synthesized; turn off with trollCode.sound.enabled)
+• Pops up fake "Congratulations, you've been selected!" prize windows
+• Randomly rearranges the layout (side bar side, activity bar position, panel alignment, menu bar) — all restored when you turn it off
+• Opens a fake hacker/Matrix/crypto-miner/FBI/DOOM console (just animated text)
 
 All changed settings (theme, font, cursor, line numbers, minimap, window title) are restored when you turn it off.
 Your files are never modified and no data is collected.
 You can turn it off at any time with Ctrl+Alt+Shift+P (PANIC) or by clicking the status bar icon.`;
 // Podbić przy każdej zmianie listy efektów — wtedy ostrzeżenie pokaże się znowu.
-const HARDCORE_VERSION = 8;
+const HARDCORE_VERSION = 11;
 const HARDCORE_ACCEPT = "Yes, I know what I'm doing";
 // Drugie, ostatnie potwierdzenie.
 const HARDCORE_FINAL_TITLE = '☠️ Last chance!';
@@ -283,10 +347,19 @@ let corrupted = new Set();
 let workspaceFiles = [];
 let fileDecoEmitter;
 let sidebarPausedUntil = 0;
+let fakeProvider;
+let stackCount = 0;
+const STACK_MAX = 100;
 let sneakyEditing = false;      // nasza edycja w toku — żeby nie zapętlić
 let sneakyTimer;
 let lastSneakyAt = 0;
+// Mapa odwrotna: podmieniony znak -> oryginał, żeby po wyjściu z Troll wszystko cofnąć.
+const sneakyReverse = new Map();
+// Pliki (uri jako string), w których coś podmieniliśmy.
+let sneakyTouched = new Set();
 let bsodPanel;
+let beepPanel;
+let congratsPanel;
 const trollBreakpoints = new Map(); // breakpoint -> czas dodania
 const cat = { uri: undefined, line: 0, x: 0, straining: 0, poops: [] };
 
@@ -318,6 +391,9 @@ function activate(context) {
 
   registerFakeFiles(context);
   cleanupLeftoverBreakpoints();
+  loadSneaky();
+  // jeśli VS Code zamknięto w trybie Troll z podmianami, a teraz Troll jest wyłączony — cofnij
+  if (mode() !== 'troll' || !cfg().get('enabled')) safely(revertSneaky);
 
   originals = context.globalState.get('originals', {});
   // zgodność z 0.4–0.6, gdzie zapamiętywany był tylko motyw
@@ -474,11 +550,15 @@ function restart() {
   clearDecorations(catDeco);
   clearFakeFiles();
   vscode.commands.executeCommand('setContext', 'trollCode.hardcore', rainbowOn());
+  if (!rainbowOn()) resetStack();
   if (hackerTerminal) hackerTerminal.dispose();
   removeTrollBreakpoints();
   if (bsodPanel) bsodPanel.dispose();
+  if (!rainbowOn() && beepPanel) beepPanel.dispose();
   updateStatusBar();
   if (!rainbowOn()) restoreSettings();
+  // wyjście z trybu Troll (zmiana trybu, PANIC, wyłączenie) cofa wszystkie podmiany znaków
+  if (mode() !== 'troll' || !cfg().get('enabled')) safely(revertSneaky);
   if (!cfg().get('enabled')) return;
 
   // Tryb włączony w ustawieniach, ale bez zgody — najpierw ostrzeżenie.
@@ -519,6 +599,10 @@ function restart() {
     randomly(RAINBOW.titleMs, randomTitle);
     randomly(RAINBOW.bsodMs, showBsod);
     every(RAINBOW.breakpointMs, flickerBreakpoints);
+    every(1000, stackExplorer);
+    randomly(RAINBOW.congratsMs, showCongrats);
+    randomly(RAINBOW.layoutMs, randomLayout);
+    if (cfg().get('sound.enabled') !== false) startBeeping();
     closeOwnExtensionTabs(vscode.window.tabGroups.all.flatMap((g) => g.tabs));
     every(RAINBOW.fakeErrorsMs, paintAllErrors);
     every(RAINBOW.catMs, walkCat);
@@ -660,9 +744,9 @@ function closeOwnExtensionTabs(tabs) {
   );
 }
 
+// Nasze własne karty webview — nie zamykamy ich automatycznie (bo np. beep by ucichł).
 const isWaifuTab = (tab) =>
-  tab.input instanceof vscode.TabInputWebview &&
-  (tab.input.viewType.includes('trollCode.waifu') || tab.input.viewType.includes('trollCode.bsod'));
+  tab.input instanceof vscode.TabInputWebview && tab.input.viewType.includes('trollCode.');
 
 // Zamyka wszystkie karty poza niezapisanymi (żeby nic nie przepadło), waifu (bo waifu zostaje)
 // i terminalami (żeby nie zabić czyjegoś procesu).
@@ -791,6 +875,12 @@ function adhdCursor() {
 
 function randomTitle() {
   chaosSet('window.title', pick(WINDOW_TITLES));
+}
+
+// Co kilka sekund zmienia jedną opcję układu (pasek boczny, aktywności, panel, menu).
+function randomLayout() {
+  const opt = pick(LAYOUT_OPTIONS);
+  chaosSet(opt.key, pick(opt.values));
 }
 
 // --- nakładki w edytorze (plik się nie zmienia) -----------------------------
@@ -966,6 +1056,11 @@ function registerFakeFiles(context) {
   // i osobna strona panelu bocznego z ikoną jak Explorer (na nią przełączamy podczas ataku).
   fakeFilesView = vscode.window.createTreeView('trollCode.fakeFiles', { treeDataProvider });
   fakeExplorerView = vscode.window.createTreeView('trollCode.fakeExplorer', { treeDataProvider });
+  fakeProvider = treeDataProvider;
+  // sto zapasowych „Explorerów” w pasku aktywności (widoczne dopiero po ustawieniu kontekstu)
+  for (let i = 0; i < STACK_MAX; i++) {
+    context.subscriptions.push(vscode.window.registerTreeDataProvider('trollCode.stack.' + i, treeDataProvider));
+  }
 
   // Prawdziwego Explorera nie da się schować z rozszerzenia, więc w Hardcore go „porywamy”:
   // nasza sekcja siedzi w prawdziwym Explorerze, więc gdy staje się widoczna, ktoś go właśnie otworzył
@@ -1214,20 +1309,185 @@ async function corruptOnce(editor) {
   const pick1 = pick(candidates);
 
   let replacement;
-  if (pick1.kind === 'swap') replacement = SNEAKY_SWAPS[pick1.c];
-  else if (Math.random() < 0.3) replacement = pick([...HEBREW]);        // czasem od razu hebrajski
-  else replacement = CYRILLIC_TWINS[pick1.c];
+  if (pick1.kind === 'swap') {
+    replacement = SNEAKY_SWAPS[pick1.c];
+  } else if (Math.random() < 0.3) {
+    // czasem litera hebrajska; bierzemy taką, której jeszcze nie użyliśmy,
+    // żeby dało się ją jednoznacznie cofnąć do oryginału
+    const free = [...HEBREW].filter((h) => !sneakyReverse.has(h));
+    replacement = free.length ? pick(free) : CYRILLIC_TWINS[pick1.c];
+  } else {
+    replacement = CYRILLIC_TWINS[pick1.c];
+  }
+  if (!replacement || replacement === pick1.c) return;
 
   const range = new vscode.Range(pick1.ln, pick1.ch, pick1.ln, pick1.ch + 1);
   sneakyEditing = true;
   try {
     const edit = new vscode.WorkspaceEdit();
     edit.replace(doc.uri, range, replacement);
-    await vscode.workspace.applyEdit(edit);
-    lastSneakyAt = now;
+    if (await vscode.workspace.applyEdit(edit)) {
+      sneakyReverse.set(replacement, pick1.c);     // podmieniony -> oryginał
+      sneakyTouched.add(doc.uri.toString());
+      persistSneaky();
+      lastSneakyAt = now;
+    }
   } finally {
     setTimeout(() => (sneakyEditing = false), 50);
   }
+}
+
+// Zapamiętujemy cofanie na dysku, żeby zadziałało nawet po restarcie VS Code.
+function persistSneaky() {
+  if (!ctx) return;
+  ctx.globalState.update('sneakyReverse', [...sneakyReverse.entries()]);
+  ctx.globalState.update('sneakyTouched', [...sneakyTouched]);
+}
+
+function loadSneaky() {
+  if (!ctx) return;
+  for (const [k, v] of ctx.globalState.get('sneakyReverse', [])) sneakyReverse.set(k, v);
+  sneakyTouched = new Set(ctx.globalState.get('sneakyTouched', []));
+}
+
+// Cofa WSZYSTKIE podmiany: w każdym dotkniętym pliku przywraca znaki do oryginałów.
+async function revertSneaky() {
+  if (!sneakyTouched.size) return;
+  const touched = [...sneakyTouched];
+  sneakyTouched = new Set();
+  sneakyEditing = true;
+  try {
+    for (const uriStr of touched) {
+      let doc;
+      try {
+        doc = await vscode.workspace.openTextDocument(vscode.Uri.parse(uriStr));
+      } catch {
+        continue; // plik mógł zostać usunięty albo przeniesiony
+      }
+      const text = doc.getText();
+      let changed = false;
+      let out = '';
+      for (const chr of text) {
+        const original = sneakyReverse.get(chr);
+        if (original !== undefined) { out += original; changed = true; }
+        else out += chr;
+      }
+      if (!changed) continue;
+      const full = new vscode.Range(doc.positionAt(0), doc.positionAt(text.length));
+      const edit = new vscode.WorkspaceEdit();
+      edit.replace(doc.uri, full, out);
+      await vscode.workspace.applyEdit(edit);
+    }
+  } finally {
+    persistSneaky();
+    setTimeout(() => (sneakyEditing = false), 50);
+  }
+}
+
+// --- dźwięk: pisk jak z McDonalda (syntezowany, nic nie pobieramy) ------------
+// Alarm frytkownicy do nuggetsów: wysoki, przeszywający ton, szybkie piknięcia.
+// Odtwarzany przez Web Audio w webview (VS Code inaczej nie zagra dźwięku).
+const BEEP_SCRIPT = `
+  let __actx;
+  function __beep(freq, dur){
+    try{
+      __actx = __actx || new (window.AudioContext||window.webkitAudioContext)();
+      if(__actx.state==='suspended') __actx.resume();
+      const o=__actx.createOscillator(), g=__actx.createGain();
+      o.type='square'; o.frequency.value=freq;
+      const t=__actx.currentTime;
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(0.3,t+0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.connect(g); g.connect(__actx.destination);
+      o.start(t); o.stop(t+dur+0.02);
+    }catch(e){}
+  }
+  // ciągłe, szybkie piszczenie ~2.7 kHz: 90 ms gra, 110 ms cisza
+  function __startBeepLoop(){ __beep(2700,0.09); setInterval(()=>__beep(2700,0.09), 200); }
+`;
+
+function startBeeping() {
+  if (beepPanel) return;
+  beepPanel = vscode.window.createWebviewPanel(
+    'trollCode.beep',
+    '🔊',
+    { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
+    { enableScripts: true, retainContextWhenHidden: true }
+  );
+  beepPanel.onDidDispose(() => (beepPanel = undefined));
+  const nonce = Math.random().toString(36).slice(2);
+  beepPanel.webview.html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';">
+<style>
+  body{margin:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+       background:#111;color:#ffd200;font-family:sans-serif;text-align:center;gap:12px}
+  .m{font-size:64px}
+</style></head>
+<body>
+  <div class="m">🍟</div>
+  <p>Nuggetsy gotowe.<br>beep beep beep beep…</p>
+  <script nonce="${nonce}">
+    ${BEEP_SCRIPT}
+    __startBeepLoop();
+  </script>
+</body></html>`;
+}
+
+// --- mem „Gratulacje, zostałeś wybrany” ---------------------------------------
+
+const CONGRATS = [
+  { big: '🎉 GRATULACJE! 🎉', sub: 'Zostałeś wybrany jako 1 000 000-ty programista!', btn: 'ODBIERZ NAGRODĘ' },
+  { big: '🏆 WYGRAŁEŚ! 🏆', sub: 'Jesteś losowym zwycięzcą iPhone 42 Pro Max!', btn: 'KLIKNIJ TUTAJ' },
+  { big: '👑 WOW! 👑', sub: 'Twój kod zakwalifikował się do finału. Nagroda: 0 bugów!', btn: 'TAK, CHCĘ' },
+  { big: '💰 $1,000,000 💰', sub: 'Rząd Nigerii wybrał właśnie CIEBIE!', btn: 'ODBIERZ TERAZ' },
+  { big: '🎁 NIESPODZIANKA! 🎁', sub: 'Zostałeś wybrany jako najlepszy senior w tym pokoju!', btn: 'ZASŁUGUJĘ' },
+];
+
+function showCongrats() {
+  const c = pick(CONGRATS);
+  if (!congratsPanel) {
+    congratsPanel = vscode.window.createWebviewPanel(
+      'trollCode.congrats',
+      '🎉 Gratulacje!',
+      { viewColumn: vscode.ViewColumn.Active, preserveFocus: false },
+      { enableScripts: true }
+    );
+    congratsPanel.onDidDispose(() => (congratsPanel = undefined));
+  }
+  const nonce = Math.random().toString(36).slice(2);
+  congratsPanel.webview.html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';">
+<style>
+  @keyframes flash{0%{background:#ff00e6}25%{background:#00e5ff}50%{background:#ffe600}75%{background:#00ff6a}100%{background:#ff00e6}}
+  @keyframes shake{0%,100%{transform:translate(0,0)}25%{transform:translate(-6px,4px)}50%{transform:translate(6px,-4px)}75%{transform:translate(-4px,-6px)}}
+  body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;animation:flash .6s infinite;font-family:'Comic Sans MS',sans-serif}
+  .box{background:#fff;border:6px dashed #ff0054;border-radius:16px;padding:6vh 6vw;text-align:center;animation:shake .4s infinite;max-width:80vw}
+  .big{font-size:5vw;font-weight:900;color:#ff0054;margin:0 0 2vh}
+  .sub{font-size:2.4vw;margin:0 0 4vh;color:#222}
+  .btn{display:inline-block;font-size:2.6vw;font-weight:900;color:#fff;background:#00b300;border-radius:12px;padding:1.5vh 4vw;cursor:pointer;box-shadow:0 6px 0 #007a00}
+  .small{margin-top:3vh;font-size:1.2vw;color:#666}
+</style></head>
+<body>
+  <div class="box">
+    <p class="big">${c.big}</p>
+    <p class="sub">${c.sub}</p>
+    <div class="btn" id="b">${c.btn}</div>
+    <p class="small">🤡 Żart. Niczego nie wygrałeś. Zamknij tę kartę.</p>
+  </div>
+  <script nonce="${nonce}">
+    ${BEEP_SCRIPT}
+    // fanfary: trzy wznoszące piknięcia, a potem to samo piszczenie co w tle
+    __beep(1047,0.15); setTimeout(()=>__beep(1319,0.15),160); setTimeout(()=>__beep(1568,0.3),320);
+    setTimeout(__startBeepLoop, 700);
+    // przycisk ucieka od kursora — klasyka
+    const b=document.getElementById('b');
+    b.addEventListener('mouseover',()=>{b.style.transform='translate('+(Math.random()*40-20)+'vw,'+(Math.random()*30-15)+'vh)';});
+  </script>
+</body></html>`;
+  congratsPanel.reveal(vscode.ViewColumn.Active, false);
 }
 
 // --- fałszywy niebieski ekran (BSOD) ------------------------------------------
@@ -1367,42 +1627,62 @@ function cleanupLeftoverBreakpoints() {
   ctx.workspaceState.update(BREAKPOINTS_KEY, []);
 }
 
+// --- stakowanie Explorera w pasku aktywności ---------------------------------
+// Co sekundę 30% szansy na kolejną kopię ikony Explorera, aż do 100.
+// Widoki są gotowe w package.json, tu tylko zapalamy kolejne kontekstem.
+
+function stackExplorer() {
+  if (!rainbowOn() || stackCount >= STACK_MAX) return;
+  if (Math.random() >= 0.3) return;
+  vscode.commands.executeCommand('setContext', 'trollCode.stackVisible.' + stackCount, true);
+  stackCount++;
+}
+
+function resetStack() {
+  for (let i = 0; i < stackCount; i++) {
+    vscode.commands.executeCommand('setContext', 'trollCode.stackVisible.' + i, false);
+  }
+  stackCount = 0;
+}
+
 // --- fałszywy terminal hakera (nic nie uruchamia) ---------------------------
 
 function hackerTerminalShow() {
   if (hackerTerminal) return;
+  const theme = pick(TERMINAL_THEMES);
   const write = new vscode.EventEmitter();
   const close = new vscode.EventEmitter();
   let interval;
-  const green = (s) => `\x1b[1;32m${s}\x1b[0m`;
-  const randomChars = (n) => Array.from({ length: n }, () => pick('01アイウエオカキクケコABCDEF0123456789#$%&'.split(''))).join('');
+  const paint = (s) => `\x1b[1;${theme.color}m${s}\x1b[0m`;
+  const chars = theme.charset.split('');
+  const randomChars = (n) => Array.from({ length: n }, () => pick(chars)).join('');
 
   const pty = {
     onDidWrite: write.event,
     onDidClose: close.event,
     open: () => {
-      write.fire(green('💀 H4CK3R CONSOLE v13.37 💀\r\n\r\n'));
+      write.fire(paint(theme.header) + '\r\n\r\n');
       let n = 0;
       interval = setInterval(() => {
         n++;
         if (n % 6 === 0) {
-          write.fire(green(`[${Math.min(100, Math.floor(n * 1.7))}%] ${pick(HACKER_LINES)}`) + '\r\n');
+          write.fire(paint(`[${Math.min(100, Math.floor(n * 1.7))}%] ${pick(theme.lines)}`) + '\r\n');
         } else {
-          write.fire(green(randomChars(60)) + '\r\n');
+          write.fire(paint(randomChars(60)) + '\r\n');
         }
         if (n >= 60) {
           clearInterval(interval);
-          write.fire('\r\n\x1b[1;5;31m  ██ ACCESS GRANTED ██  \x1b[0m\r\n');
-          write.fire(green('  Just kidding. Nothing was hacked. 🤡\r\n'));
+          write.fire('\r\n' + theme.finale[0] + '\r\n');
+          write.fire(paint(theme.finale[1]) + '\r\n');
           setTimeout(() => close.fire(), 3000);
         }
       }, 80);
     },
     close: () => clearInterval(interval),
-    handleInput: () => write.fire('\x1b[1;31m  Nice try. 🤡\x1b[0m\r\n'),
+    handleInput: () => write.fire(paint('  Nice try. 🤡') + '\r\n'),
   };
 
-  hackerTerminal = vscode.window.createTerminal({ name: '💀 H4CK3R', pty });
+  hackerTerminal = vscode.window.createTerminal({ name: theme.name, pty });
   hackerTerminal.show(true);
 }
 
