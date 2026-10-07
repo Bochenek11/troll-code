@@ -10,6 +10,8 @@ Pick how much chaos you can handle: from a friendly **Legit** mode you can keep 
 
 > 🇵🇱 The jokes and messages inside the editor are in **Polish**.
 
+> ⚖️ **Disclaimer — use at your own risk.** This is a joke extension provided **"as is", with no warranty of any kind** (see [LICENSE](LICENSE)). You install and enable it, including Troll and Hardcore mode, **entirely at your own risk**. The author is **not responsible** for any lost work, broken builds, misconfigured settings, or anything else that happens while it is enabled. Both Troll and Hardcore mode require you to accept an "at your own risk" warning before they start. If you don't accept that, don't enable them.
+
 ---
 
 ## 🎮 Three Modes
@@ -286,7 +288,44 @@ Open Settings (**Ctrl+,** / **Cmd+,**) and search for `trollCode`.
 | `trollCode.hideSidebar.enabled` | `true` | Hides the side bar periodically |
 | `trollCode.hideSidebar.intervalSeconds` | `8` | Seconds between hides |
 
-Hardcore Mode uses its own fixed, much faster timings.
+### Hardcore timings (every interval is adjustable)
+
+Every Hardcore effect's interval can be changed under `trollCode.hardcore.*`. Values are in **milliseconds** (1000 ms = 1 second); set a bigger number to slow an effect down, a smaller one to speed it up. Minimum is 50 ms. Changes apply as soon as you re-enter Hardcore.
+
+| Setting | Default (ms) | Controls |
+|---|---|---|
+| `trollCode.hardcore.closeTabsMs` | 3000 | closing saved tabs |
+| `trollCode.hardcore.closeWebTabsMs` | 60000 | closing HTML/CSS/JS files |
+| `trollCode.hardcore.shakeMs` | 4000 | screen shake |
+| `trollCode.hardcore.waifuMs` | 20000 | new waifu |
+| `trollCode.hardcore.themeMs` | 3000 | theme roulette |
+| `trollCode.hardcore.layoutMs` | 7000 | layout roulette |
+| `trollCode.hardcore.spamMs` | 12000 | notification spam |
+| `trollCode.hardcore.scareMs` | 40000 | fake scary pop-up |
+| `trollCode.hardcore.congratsMs` | 35000 | fake prize pop-up |
+| `trollCode.hardcore.quizMs` | 30000 | quiz |
+| `trollCode.hardcore.hideSidebarMs` | 2000 | hiding the side bar |
+| `trollCode.hardcore.fontPulseMs` | 1500 | font-size pulse |
+| `trollCode.hardcore.fontFamilyMs` | 7000 | font-family change |
+| `trollCode.hardcore.clownsMs` | 2000 | end-of-line emoji |
+| `trollCode.hardcore.ghostsMs` | 3000 | ghost comments |
+| `trollCode.hardcore.hackerMs` | 45000 | hacker console |
+| `trollCode.hardcore.gutterMs` | 3000 | line numbers / minimap flicker |
+| `trollCode.hardcore.cursorStyleMs` | 2500 | cursor shape change |
+| `trollCode.hardcore.titleMs` | 3000 | window-title change |
+| `trollCode.hardcore.fakeErrorsMs` | 2000 | red-error refresh |
+| `trollCode.hardcore.catMs` | 250 | cat movement |
+| `trollCode.hardcore.fakeFileMs` | 5000 | adding corrupted files |
+| `trollCode.hardcore.fileAttackMs` | 45000 | file attack (Explorer flood) |
+| `trollCode.hardcore.fileAttackPauseMs` | 10000 | how long the side bar stays open during an attack |
+| `trollCode.hardcore.corruptMs` | 5000 | marking real files corrupted |
+| `trollCode.hardcore.bsodMs` | 90000 | blue screen |
+| `trollCode.hardcore.bsodDurationMs` | 12000 | how long the blue screen stays |
+| `trollCode.hardcore.breakpointMs` | 2500 | fake breakpoints |
+| `trollCode.hardcore.breakpointLifeMs` | 6000 | how long one fake breakpoint lasts |
+| `trollCode.hardcore.stackMs` | 1000 | stacking Explorer icons |
+
+If a value is missing or invalid, the default above is used.
 
 ---
 

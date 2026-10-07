@@ -111,6 +111,7 @@ const RAINBOW = {
   breakpointMs: 2500,
   breakpointLifeMs: 6000,
   breakpointMax: 6,
+  stackMs: 1000,
 };
 
 // Znaki, które wyglądają jak oryginał, ale łamią składnię (homoglify).
@@ -293,7 +294,7 @@ All changed settings (theme, font, cursor, line numbers, minimap, window title) 
 Your files are never modified and no data is collected.
 You can turn it off at any time with Ctrl+Alt+Shift+P (PANIC) or by clicking the status bar icon.`;
 // Podbić przy każdej zmianie listy efektów — wtedy ostrzeżenie pokaże się znowu.
-const HARDCORE_VERSION = 11;
+const HARDCORE_VERSION = 12;
 const HARDCORE_ACCEPT = "Yes, I know what I'm doing";
 // Drugie, ostatnie potwierdzenie.
 const HARDCORE_FINAL_TITLE = '☠️ Last chance!';
@@ -303,8 +304,25 @@ const HARDCORE_FINAL_DETAIL = `Hardcore starts the moment you click the button b
 • Expect flashing colors and constant movement. Do not continue if you are sensitive to flashing lights.
 • Your files stay safe, and every changed setting is restored when you turn it off.
 
-Emergency exit at any time: Ctrl+Alt+Shift+P (PANIC).`;
+Emergency exit at any time: Ctrl+Alt+Shift+P (PANIC).
+
+DISCLAIMER: This is a joke extension provided "as is", with no warranty. You turn
+this on and use it entirely AT YOUR OWN RISK. The author is not responsible for
+anything that happens while it is enabled.`;
 const HARDCORE_FINAL_ACCEPT = '☠️ Start HARDCORE';
+
+const TROLL_DETAIL = `Troll mode is "sneaky": no status bar, no notifications.
+
+While it is on, it silently edits your open file as you type — swapping single
+characters for look-alikes that break the syntax. Every change is undoable with
+Ctrl+Z, nothing reaches disk until you save, and all swaps are put back when you
+leave Troll mode.
+
+DISCLAIMER: This is a joke extension provided "as is", with no warranty. You
+enable it and use it entirely AT YOUR OWN RISK. The author is not responsible
+for any lost work, broken builds or anything else. Don't use it on code that
+matters.`;
+const TROLL_ACCEPT = "OK, at my own risk";
 
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -317,6 +335,11 @@ const trollOn = (key) => on(key) && mode() === 'troll';
 const LEGIT = { messagesMinMinutes: 10, onSaveMaxChance: 0.15 };
 const rainbowRequested = () => cfg().get('enabled') && cfg().get('rainbowMode.enabled');
 const rainbowOn = () => rainbowRequested() && ctx.globalState.get('hardcoreAccepted') === HARDCORE_VERSION;
+// Interwał hardkoru: z ustawień (trollCode.hardcore.<nazwa>), a jak brak — domyślny z RAINBOW.
+const ms = (name) => {
+  const v = cfg().get('hardcore.' + name);
+  return typeof v === 'number' && v > 0 ? v : RAINBOW[name];
+};
 
 let ctx;
 let timers = [];
@@ -581,34 +604,34 @@ function restart() {
 
   if (rainbowOn()) {
     every(100, paintRainbow);
-    every(RAINBOW.closeTabsMs, closeTabs);
-    randomly(RAINBOW.shakeMs, shakeScreen);
-    randomly(RAINBOW.waifuMs, showWaifu);
-    randomly(RAINBOW.themeMs, rouletteTheme);
-    randomly(RAINBOW.spamMs, spamMessages);
-    randomly(RAINBOW.scareMs, fakeScare);
-    randomly(RAINBOW.quizMs, quiz);
-    every(RAINBOW.hideSidebarMs, hideSidebar);
-    every(RAINBOW.fontPulseMs, pulseFont);
-    randomly(RAINBOW.fontFamilyMs, randomFont);
-    every(RAINBOW.clownsMs, paintClowns);
-    randomly(RAINBOW.ghostsMs, showGhosts);
-    randomly(RAINBOW.hackerMs, hackerTerminalShow);
-    randomly(RAINBOW.gutterMs, flickerGutter);
-    randomly(RAINBOW.cursorStyleMs, adhdCursor);
-    randomly(RAINBOW.titleMs, randomTitle);
-    randomly(RAINBOW.bsodMs, showBsod);
-    every(RAINBOW.breakpointMs, flickerBreakpoints);
-    every(1000, stackExplorer);
-    randomly(RAINBOW.congratsMs, showCongrats);
-    randomly(RAINBOW.layoutMs, randomLayout);
+    every(ms('closeTabsMs'), closeTabs);
+    randomly(ms('shakeMs'), shakeScreen);
+    randomly(ms('waifuMs'), showWaifu);
+    randomly(ms('themeMs'), rouletteTheme);
+    randomly(ms('spamMs'), spamMessages);
+    randomly(ms('scareMs'), fakeScare);
+    randomly(ms('quizMs'), quiz);
+    every(ms('hideSidebarMs'), hideSidebar);
+    every(ms('fontPulseMs'), pulseFont);
+    randomly(ms('fontFamilyMs'), randomFont);
+    every(ms('clownsMs'), paintClowns);
+    randomly(ms('ghostsMs'), showGhosts);
+    randomly(ms('hackerMs'), hackerTerminalShow);
+    randomly(ms('gutterMs'), flickerGutter);
+    randomly(ms('cursorStyleMs'), adhdCursor);
+    randomly(ms('titleMs'), randomTitle);
+    randomly(ms('bsodMs'), showBsod);
+    every(ms('breakpointMs'), flickerBreakpoints);
+    every(ms('stackMs'), stackExplorer);
+    randomly(ms('congratsMs'), showCongrats);
+    randomly(ms('layoutMs'), randomLayout);
     if (cfg().get('sound.enabled') !== false) startBeeping();
     closeOwnExtensionTabs(vscode.window.tabGroups.all.flatMap((g) => g.tabs));
-    every(RAINBOW.fakeErrorsMs, paintAllErrors);
-    every(RAINBOW.catMs, walkCat);
-    every(RAINBOW.fakeFileMs, () => addFakeFiles(1));
-    every(RAINBOW.corruptMs, corruptRandomFiles);
-    randomly(RAINBOW.fileAttackMs, fileAttack);
+    every(ms('fakeErrorsMs'), paintAllErrors);
+    every(ms('catMs'), walkCat);
+    every(ms('fakeFileMs'), () => addFakeFiles(1));
+    every(ms('corruptMs'), corruptRandomFiles);
+    randomly(ms('fileAttackMs'), fileAttack);
     loadWorkspaceFiles();
     // szybki start: część efektów odpala od razu, zamiast czekać na pierwszy losowy termin
     timers.push(setTimeout(() => [shakeScreen, showGhosts, rouletteTheme, randomTitle].forEach(safely), 1500));
@@ -642,6 +665,7 @@ async function switchMode() {
     await vscode.commands.executeCommand('trollCode.rainbowToggle');
     return;
   }
+  if (choice.id === 'troll' && !(await confirmTroll())) return;
   await cfg().update('rainbowMode.enabled', false, vscode.ConfigurationTarget.Global);
   if (choice.id === 'off') {
     await cfg().update('enabled', false, vscode.ConfigurationTarget.Global);
@@ -649,7 +673,17 @@ async function switchMode() {
   }
   await cfg().update('mode', choice.id, vscode.ConfigurationTarget.Global);
   await cfg().update('enabled', true, vscode.ConfigurationTarget.Global);
-  vscode.window.showInformationMessage(choice.id === 'legit' ? '😇 Tryb Legit. Będzie miło. Prawie.' : '🤡 Tryb Troll. Powodzenia.');
+  vscode.window.showInformationMessage(choice.id === 'legit' ? '😇 Tryb Legit. Będzie miło. Prawie.' : '🤡 Tryb Troll. Use at your own risk.');
+}
+
+// Troll edytuje tekst w plikach, więc też wymaga świadomej zgody.
+async function confirmTroll() {
+  const choice = await vscode.window.showWarningMessage(
+    '🤡 Enable TROLL mode?',
+    { modal: true, detail: TROLL_DETAIL },
+    TROLL_ACCEPT
+  );
+  return choice === TROLL_ACCEPT;
 }
 
 // Dwa okna: najpierw pełna lista efektów, potem ostatnie ostrzeżenie. Anulowanie któregokolwiek = nic się nie włącza.
@@ -756,7 +790,7 @@ const isWebFileTab = (tab) => tab.input instanceof vscode.TabInputText && WEB_FI
 let lastWebClose = Date.now();
 
 function closeTabs() {
-  const closeWeb = Date.now() - lastWebClose >= RAINBOW.closeWebTabsMs;
+  const closeWeb = Date.now() - lastWebClose >= ms('closeWebTabsMs');
   if (closeWeb) lastWebClose = Date.now();
   const tabs = vscode.window.tabGroups.all
     .flatMap((g) => g.tabs)
@@ -1223,7 +1257,7 @@ function corruptRandomFiles() {
 // i zalewają ją uszkodzone pliki.
 async function fileAttack() {
   if (!fakeRoot) return;
-  sidebarPausedUntil = Date.now() + RAINBOW.fileAttackPauseMs;
+  sidebarPausedUntil = Date.now() + ms('fileAttackPauseMs');
   try {
     await vscode.commands.executeCommand('workbench.files.action.collapseExplorerFolders');
     await vscode.commands.executeCommand('workbench.view.extension.trollExplorer');
@@ -1508,7 +1542,7 @@ async function showBsod() {
   timers.push(setTimeout(() => {
     if (panel === bsodPanel) panel.dispose();
     vscode.commands.executeCommand('workbench.action.evenEditorWidths').then(undefined, () => {});
-  }, RAINBOW.bsodDurationMs));
+  }, ms('bsodDurationMs')));
 }
 
 function bsodHtml() {
@@ -1573,7 +1607,7 @@ function saveTrollBreakpoints() {
 
 function flickerBreakpoints() {
   const now = Date.now();
-  const expired = [...trollBreakpoints].filter(([, added]) => now - added > RAINBOW.breakpointLifeMs).map(([bp]) => bp);
+  const expired = [...trollBreakpoints].filter(([, added]) => now - added > ms('breakpointLifeMs')).map(([bp]) => bp);
   if (expired.length) {
     vscode.debug.removeBreakpoints(expired);
     expired.forEach((bp) => trollBreakpoints.delete(bp));

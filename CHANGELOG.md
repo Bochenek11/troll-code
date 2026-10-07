@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.13.0
+- Zrzeczenie odpowiedzialności: tryb Troll ma teraz własne okno zgody („OK, at my own risk”), bo edytuje pliki. Hardcore i Troll mówią wprost „use at your own risk”.
+- README: sekcja Disclaimer („as is”, bez gwarancji, na własne ryzyko, autor nie odpowiada).
+## 1.12.0
+- Każdy interwał efektów Hardcore można teraz ustawić w `trollCode.hardcore.*` (w milisekundach). Brak/zła wartość = domyślna. Lista w README.
+
 ## 1.11.0
 - Hardcore: ruletka układu — co kilka sekund zmienia się jedna opcja z „Customize Layout” (pasek boczny lewo/prawo, pasek aktywności góra/dół/ukryty, wyrównanie panelu, pasek menu). Wszystko wraca po wyjściu z Hardcore.
 

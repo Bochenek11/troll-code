@@ -2,7 +2,7 @@
   "name": "troll-code",
   "displayName": "Troll Code 🤡",
   "description": "A prank extension for VS Code with three modes: Legit (light jokes), Troll (annoying) and opt-in Hardcore (pure chaos). Never edits your files. Panic button: Ctrl+Alt+Shift+P.",
-  "version": "1.11.0",
+  "version": "1.13.0",
   "publisher": "bochenek11",
   "icon": "icon.png",
   "license": "MIT",
@@ -1333,6 +1333,186 @@
           "default": false,
           "description": "☠️ Tryb Hardcore: totalny chaos (tęczowy tekst, zamykanie kart, ruletka motywów, kot, fałszywe błędy i dużo więcej, pełna lista w README). Przed włączeniem trzeba potwierdzić ostrzeżenie. Zmienione ustawienia wracają po wyłączeniu. PANIC: Ctrl+Alt+Shift+P."
         },
+        "trollCode.hardcore.closeTabsMs": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: zamykanie zapisanych kart. Domyślnie 3000 ms."
+        },
+        "trollCode.hardcore.closeWebTabsMs": {
+          "type": "number",
+          "default": 60000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: zamykanie plików HTML/CSS/JS. Domyślnie 60000 ms."
+        },
+        "trollCode.hardcore.shakeMs": {
+          "type": "number",
+          "default": 4000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: trzęsienie ekranu. Domyślnie 4000 ms."
+        },
+        "trollCode.hardcore.waifuMs": {
+          "type": "number",
+          "default": 20000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: nowe waifu. Domyślnie 20000 ms."
+        },
+        "trollCode.hardcore.themeMs": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: ruletka motywów. Domyślnie 3000 ms."
+        },
+        "trollCode.hardcore.spamMs": {
+          "type": "number",
+          "default": 12000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: spam powiadomień. Domyślnie 12000 ms."
+        },
+        "trollCode.hardcore.scareMs": {
+          "type": "number",
+          "default": 40000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: fałszywy straszak (np. „Formatowanie C:”). Domyślnie 40000 ms."
+        },
+        "trollCode.hardcore.congratsMs": {
+          "type": "number",
+          "default": 35000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: mem „Gratulacje, zostałeś wybrany”. Domyślnie 35000 ms."
+        },
+        "trollCode.hardcore.layoutMs": {
+          "type": "number",
+          "default": 7000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: ruletka układu. Domyślnie 7000 ms."
+        },
+        "trollCode.hardcore.quizMs": {
+          "type": "number",
+          "default": 30000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: quiz. Domyślnie 30000 ms."
+        },
+        "trollCode.hardcore.hideSidebarMs": {
+          "type": "number",
+          "default": 2000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: chowanie panelu bocznego. Domyślnie 2000 ms."
+        },
+        "trollCode.hardcore.fontPulseMs": {
+          "type": "number",
+          "default": 1500,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: pulsowanie rozmiaru czcionki. Domyślnie 1500 ms."
+        },
+        "trollCode.hardcore.fontFamilyMs": {
+          "type": "number",
+          "default": 7000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: zmiana kroju czcionki. Domyślnie 7000 ms."
+        },
+        "trollCode.hardcore.clownsMs": {
+          "type": "number",
+          "default": 2000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: emoji na końcach linii. Domyślnie 2000 ms."
+        },
+        "trollCode.hardcore.ghostsMs": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: „duchy” (szare komentarze). Domyślnie 3000 ms."
+        },
+        "trollCode.hardcore.hackerMs": {
+          "type": "number",
+          "default": 45000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: konsola hakera. Domyślnie 45000 ms."
+        },
+        "trollCode.hardcore.gutterMs": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: miganie numerów linii i minimapy. Domyślnie 3000 ms."
+        },
+        "trollCode.hardcore.cursorStyleMs": {
+          "type": "number",
+          "default": 2500,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: zmiana kształtu kursora. Domyślnie 2500 ms."
+        },
+        "trollCode.hardcore.titleMs": {
+          "type": "number",
+          "default": 3000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: zmiana tytułu okna. Domyślnie 3000 ms."
+        },
+        "trollCode.hardcore.fakeErrorsMs": {
+          "type": "number",
+          "default": 2000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: odświeżanie czerwonych błędów. Domyślnie 2000 ms."
+        },
+        "trollCode.hardcore.catMs": {
+          "type": "number",
+          "default": 250,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: ruch kota. Domyślnie 250 ms."
+        },
+        "trollCode.hardcore.fakeFileMs": {
+          "type": "number",
+          "default": 5000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: dodawanie uszkodzonych plików. Domyślnie 5000 ms."
+        },
+        "trollCode.hardcore.fileAttackMs": {
+          "type": "number",
+          "default": 45000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: atak plików (zalew Explorera). Domyślnie 45000 ms."
+        },
+        "trollCode.hardcore.fileAttackPauseMs": {
+          "type": "number",
+          "default": 10000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: jak długo panel zostaje otwarty podczas ataku. Domyślnie 10000 ms."
+        },
+        "trollCode.hardcore.corruptMs": {
+          "type": "number",
+          "default": 5000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: oznaczanie prawdziwych plików jako uszkodzone. Domyślnie 5000 ms."
+        },
+        "trollCode.hardcore.bsodMs": {
+          "type": "number",
+          "default": 90000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: niebieski ekran (BSOD). Domyślnie 90000 ms."
+        },
+        "trollCode.hardcore.bsodDurationMs": {
+          "type": "number",
+          "default": 12000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: czas trwania BSOD. Domyślnie 12000 ms."
+        },
+        "trollCode.hardcore.breakpointMs": {
+          "type": "number",
+          "default": 2500,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: fałszywe breakpointy. Domyślnie 2500 ms."
+        },
+        "trollCode.hardcore.breakpointLifeMs": {
+          "type": "number",
+          "default": 6000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: jak długo trzyma się jeden fałszywy breakpoint. Domyślnie 6000 ms."
+        },
+        "trollCode.hardcore.stackMs": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 50,
+          "description": "[tryb Hardcore] Odstęp w milisekundach: nawarstwianie ikon Explorera. Domyślnie 1000 ms."
+        },
         "trollCode.messages.enabled": {
           "type": "boolean",
           "default": true,
@@ -1374,7 +1554,11 @@
           "minimum": 1,
           "description": "[tryb Troll] Minimalny odstęp (s) między podmianami znaków."
         },
-        "trollCode.sound.enabled": { "type": "boolean", "default": true, "description": "[tryb Hardcore] Zapętlony pisk „jak z McDonalda” (syntezowany, bez pobierania). Otwiera cichą kartę webview, bo tylko tak VS Code może odtwarzać dźwięk." },
+        "trollCode.sound.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "[tryb Hardcore] Zapętlony pisk „jak z McDonalda” (syntezowany, bez pobierania). Otwiera cichą kartę webview, bo tylko tak VS Code może odtwarzać dźwięk."
+        },
         "trollCode.fakeWarnings.enabled": {
           "type": "boolean",
           "default": true,
