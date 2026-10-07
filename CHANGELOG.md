@@ -1,0 +1,80 @@
+# Changelog
+
+## 1.6.0
+- Hardcore: fałszywy niebieski ekran (BSOD) co ~90 s, który zmienia się w „Żart 🤡” i sam znika po ~12 s. Komenda „Niebieski ekran (BSOD) teraz”.
+- Hardcore: fałszywe breakpointy pojawiają się i znikają na losowych linijkach (nigdy podczas debugowania, sprzątane są tylko własne).
+
+## 1.5.1
+- Mniej fałszywych plików: 1 co 5 s (zamiast 1–3 co sekundę), maksymalnie 50, atak co ~45 s dorzuca 12.
+
+## 1.5.0
+- Hardcore: otwarcie prawdziwego Explorera przerzuca na podróbkę („🤡 Nie ten Explorer.”). Prawdziwe pliki dalej dostępne przez Ctrl+P.
+- README: jak dostać się do prawdziwych plików i jak ręcznie schować prawdziwy Explorer.
+
+## 1.4.0
+- Włączenie Hardcore wymaga dwóch potwierdzeń: lista efektów („Yes, I know what I'm doing”), a potem „☠️ Last chance!” („☠️ Start HARDCORE”).
+- Szybszy start Hardcore: trzęsienie, duchy, motyw i tytuł po 1,5 s, terminal hakera po 4 s, pierwszy atak plików po 6 s.
+- README: kroki włączania Hardcore, rozdział „Is It Safe? (FAQ)”, aktualne czasy efektów, nowe porady.
+
+## 1.3.0
+- Naprawione pętle: błąd w jednym efekcie nie zatrzymuje go już na zawsze (stąd z czasem działo się coraz mniej).
+- Podróbka Explorera ma własną stronę panelu bocznego; podczas ataku cały panel przełącza się na nią.
+- Stałe identyfikatory elementów drzewa (koniec błędów „No tree item with id”).
+- Hardkor szybszy: częstsze trzęsienia, duchy, terminal, ataki plików i inne.
+
+## 1.2.0
+- Uszkodzone pliki pokazują się teraz w drzewie udającym twój projekt (sekcja nazwana jak folder), a nie w płaskiej liście.
+- Każdy uszkodzony plik ma losową ikonę w losowym kolorze.
+
+## 1.1.0
+- Hardkor: zalew fałszywych uszkodzonych plików w Explorerze i czerwone 💀 na prawdziwych plikach (tylko wygląd).
+- Uciekający kursor działa też po kliknięciu myszką, w hardkorze skacze do 3 linijek.
+- Zmiany ustawień (kursor, czcionka, motyw…) zapisywane po kolei, żeby VS Code ich nie odrzucał.
+
+## 1.0.1
+- Czytelny komunikat zamiast błędu, gdy po aktualizacji VS Code nie zarejestrował jeszcze nowych ustawień.
+
+## 1.0.0
+- 😇 Nowy tryb **Legit** (domyślny): tylko lekkie żarty, które nie przeszkadzają w pracy.
+- 🤡 Dotychczasowe uciążliwe efekty przeniesione do trybu **Troll**.
+- Wybór trybu przez kliknięcie ikony w pasku statusu albo komendę „Wybierz tryb”.
+- Nowe README po angielsku: tryby, ostrzeżenia, bezpieczeństwo, ustawienia, prywatność, rozwiązywanie problemów.
+
+## 0.9.0
+- Hardkor: cały kod na czerwono (fałszywy błąd na każdej linijce).
+- Hardkor: kot Mruczek chodzi po całym edytorze i robi kupę na kodzie.
+
+## 0.8.0
+- Hardkor: fałszywe błędy w kodzie i 9999 problemów w panelu Problems.
+- Hardkor: kot Mruczek chodzi po pasku statusu i robi kupę (kliknięcie sprząta).
+
+## 0.7.1
+- Pliki HTML/CSS/JS zamykane co minutę zamiast co 3 sekundy.
+
+## 0.7.0
+- Hardkor: pulsująca i zmieniająca się czcionka, emoji na końcach linijek, „duchy” w kodzie, fałszywy terminal hakera, migające numery linii i minimapa, kursor z ADHD, losowy tytuł okna.
+- Wszystkie zmieniane ustawienia są zapamiętywane i przywracane po wyłączeniu.
+- Nowa lista efektów = ostrzeżenie pokazuje się ponownie.
+
+## 0.6.0
+- Tryb HARDKOR wymaga potwierdzenia: ostrzeżenie (EN) z listą efektów i przyciskiem „Yes, I know what I'm doing”.
+
+## 0.5.0
+- 📁 Chowanie panelu bocznego co kilka sekund (hardkor: co 2 s).
+- README: jasna informacja, że to żart, co jest bezpieczne i jak wszystko wyłączyć.
+
+## 0.4.0
+- Naprawione waifu: obrazek pobierany przez rozszerzenie i wklejany w kartę.
+- Zamykacz kart omija karty z waifu.
+- Hardkor: ruletka motywów, mnożące się waifu, spam powiadomień, fałszywe straszaki, quizy, mocniejsze trzęsienia.
+
+## 0.3.0
+- Tęczowy tekst wbudowany w rozszerzenie — „Not Gay” nie jest już potrzebne.
+
+## 0.2.0
+- 🌈 Tryb tęczowy HARDKOR: integracja z „Not Gay”, zamykanie kart co 3 s, częstsze trzęsienia i waifu.
+- Trzęsienie ekranu, losowe waifu (SFW), komenda PANIC (Ctrl+Alt+Shift+P).
+- Ostrzejsze ustawienia domyślne.
+
+## 0.1.0
+- Pierwsza wersja: komentarze, fałszywy pasek postępu, komentarze przy zapisie, żartobliwe podpowiedzi, pyskate Ctrl+Z, uciekający kursor.

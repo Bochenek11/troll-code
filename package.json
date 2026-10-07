@@ -1,0 +1,79 @@
+{
+  "name": "troll-code",
+  "displayName": "Troll Code 🤡",
+  "description": "A prank extension for VS Code with three modes: Legit (light jokes), Troll (annoying) and opt-in Hardcore (pure chaos). Never edits your files. Panic button: Ctrl+Alt+Shift+P.",
+  "version": "1.6.0",
+  "publisher": "TWOJ-PUBLISHER",
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/Bochenek11/troll-code.git" },
+  "engines": { "vscode": "^1.90.0" },
+  "categories": ["Other"],
+  "keywords": ["troll", "prank", "fun", "joke", "meme", "waifu", "rainbow", "chaos"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./extension.js",
+  "scripts": {
+    "package": "npx @vscode/vsce package --no-dependencies --allow-missing-repository",
+    "publish": "npx @vscode/vsce publish --no-dependencies"
+  },
+  "contributes": {
+    "commands": [
+      { "command": "trollCode.switchMode", "title": "Troll Code: Wybierz tryb (Legit / Troll / Hardcore)" },
+      { "command": "trollCode.toggle", "title": "Troll Code: Włącz/wyłącz trolling" },
+      { "command": "trollCode.rainbowToggle", "title": "Troll Code: 🌈 Tryb tęczowy HARDKOR (włącz/wyłącz)" },
+      { "command": "trollCode.panic", "title": "Troll Code: 🛑 PANIC — wyłącz wszystko" },
+      { "command": "trollCode.trollNow", "title": "Troll Code: Trolluj mnie teraz" },
+      { "command": "trollCode.shakeNow", "title": "Troll Code: Trzęsienie ekranu teraz" },
+      { "command": "trollCode.waifuNow", "title": "Troll Code: Pokaż waifu teraz" },
+      { "command": "trollCode.bsodNow", "title": "Troll Code: Niebieski ekran (BSOD) teraz" }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        { "id": "trollExplorer", "title": "Explorer", "icon": "media/explorer.svg" }
+      ]
+    },
+    "views": {
+      "explorer": [
+        { "id": "trollCode.fakeFiles", "name": "💀 Uszkodzone pliki", "when": "trollCode.hardcore" }
+      ],
+      "trollExplorer": [
+        { "id": "trollCode.fakeExplorer", "name": "Projekt", "when": "trollCode.hardcore" }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "trollCode.sassyUndo",
+        "key": "ctrl+z",
+        "mac": "cmd+z",
+        "when": "editorTextFocus && !editorReadonly && config.trollCode.enabled && config.trollCode.sassyUndo.enabled && config.trollCode.mode == 'troll' || editorTextFocus && !editorReadonly && config.trollCode.enabled && config.trollCode.rainbowMode.enabled"
+      },
+      {
+        "command": "trollCode.panic",
+        "key": "ctrl+alt+shift+p",
+        "mac": "cmd+alt+shift+p"
+      }
+    ],
+    "configuration": {
+      "title": "Troll Code",
+      "properties": {
+        "trollCode.enabled": { "type": "boolean", "default": true, "description": "Główny włącznik wszystkich efektów." },
+        "trollCode.mode": { "type": "string", "enum": ["legit", "troll"], "enumDescriptions": ["😇 Legit: lekkie żarty, które nie przeszkadzają w pracy (komentarze, fałszywy postęp, komentarze przy zapisie, żartobliwe podpowiedzi).", "🤡 Troll: wszystko z Legit + uciekający kursor, pyskate Ctrl+Z, trzęsienie ekranu, waifu i chowający się panel boczny."], "default": "legit", "description": "Tryb trollingu. Hardcore włącza się osobno (trollCode.rainbowMode.enabled) i wymaga potwierdzenia." },
+        "trollCode.rainbowMode.enabled": { "type": "boolean", "default": false, "description": "☠️ Tryb Hardcore: totalny chaos (tęczowy tekst, zamykanie kart, ruletka motywów, kot, fałszywe błędy i dużo więcej, pełna lista w README). Przed włączeniem trzeba potwierdzić ostrzeżenie. Zmienione ustawienia wracają po wyłączeniu. PANIC: Ctrl+Alt+Shift+P." },
+        "trollCode.messages.enabled": { "type": "boolean", "default": true, "description": "Losowe złośliwe komentarze w powiadomieniach." },
+        "trollCode.messages.intervalMinutes": { "type": "number", "default": 2, "minimum": 0.25, "description": "Co ile minut (średnio) pojawia się komentarz." },
+        "trollCode.statusBar.enabled": { "type": "boolean", "default": true, "description": "Fałszywy pasek postępu w pasku statusu." },
+        "trollCode.onSave.enabled": { "type": "boolean", "default": true, "description": "Komentarze przy zapisie pliku." },
+        "trollCode.onSave.chance": { "type": "number", "default": 0.4, "minimum": 0, "maximum": 1, "description": "Szansa na komentarz przy zapisie (0–1)." },
+        "trollCode.fakeWarnings.enabled": { "type": "boolean", "default": true, "description": "Żartobliwe podpowiedzi (Information) na losowych linijkach. Znikają same." },
+        "trollCode.sassyUndo.enabled": { "type": "boolean", "default": true, "description": "[tylko tryb Troll] Ctrl+Z czasem najpierw mówi „Nie.” (i tak cofa)." },
+        "trollCode.cursorJump.enabled": { "type": "boolean", "default": true, "description": "[tylko tryb Troll] Kursor czasem ucieka o linijkę." },
+        "trollCode.cursorJump.chance": { "type": "number", "default": 0.03, "minimum": 0, "maximum": 0.2, "description": "Szansa na ucieczkę kursora przy każdym ruchu (0–0.2)." },
+        "trollCode.shake.enabled": { "type": "boolean", "default": true, "description": "[tylko tryb Troll] Losowe trzęsienie ekranu." },
+        "trollCode.shake.intervalMinutes": { "type": "number", "default": 3, "minimum": 0.25, "description": "Co ile minut (średnio) trzęsie ekranem." },
+        "trollCode.waifu.enabled": { "type": "boolean", "default": true, "description": "[tylko tryb Troll] Losowo otwiera kartę z obrazkiem anime waifu (SFW, z nekos.best / api.waifu.pics / api.waifu.im — wymaga internetu)." },
+        "trollCode.waifu.intervalMinutes": { "type": "number", "default": 5, "minimum": 0.25, "description": "Co ile minut (średnio) pojawia się waifu." },
+        "trollCode.hideSidebar.enabled": { "type": "boolean", "default": true, "description": "[tylko tryb Troll] Co kilka sekund chowa panel boczny (Explorer, Extensions itd.)." },
+        "trollCode.hideSidebar.intervalSeconds": { "type": "number", "default": 8, "minimum": 1, "description": "Co ile sekund chować panel boczny." }
+      }
+    }
+  }
+}
