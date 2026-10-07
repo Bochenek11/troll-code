@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.0
+- Hardcore: strona „Extension: Troll Code” zamyka się od razu po otwarciu (trudniej dojść do odinstalowania). Wyjście: PANIC albo `code --uninstall-extension`.
+
 ## 1.6.1
 - Przygotowanie do Marketplace: wydawca `bochenek11`, ikona rozszerzenia, link do repozytorium GitHub.
 

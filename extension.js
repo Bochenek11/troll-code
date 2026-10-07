@@ -203,12 +203,13 @@ const HARDCORE_DETAIL = `This is a prank mode. It will deliberately make VS Code
 • Opening the real Explorer sends you to a fake one (open real files with Ctrl+P)
 • Fake blue screen of death (BSOD) covering the editor for a few seconds
 • Fake red breakpoints appear and disappear on random lines (never while you are debugging; only the extension's own breakpoints are removed)
+• Instantly closes its own "Extension: Troll Code" page when you open it (to make it harder to uninstall; use Ctrl+Alt+Shift+P or the terminal instead)
 
 All changed settings (theme, font, cursor, line numbers, minimap, window title) are restored when you turn it off.
 Your files are never modified and no data is collected.
 You can turn it off at any time with Ctrl+Alt+Shift+P (PANIC) or by clicking the status bar icon.`;
 // Podbić przy każdej zmianie listy efektów — wtedy ostrzeżenie pokaże się znowu.
-const HARDCORE_VERSION = 7;
+const HARDCORE_VERSION = 8;
 const HARDCORE_ACCEPT = "Yes, I know what I'm doing";
 // Drugie, ostatnie potwierdzenie.
 const HARDCORE_FINAL_TITLE = '☠️ Last chance!';
@@ -381,6 +382,9 @@ function activate(context) {
       if (t === hackerTerminal) hackerTerminal = undefined;
     }),
 
+    // Hardkor: strona „Extension: Troll Code 🤡” zamyka się od razu po otwarciu.
+    vscode.window.tabGroups.onDidChangeTabs((e) => closeOwnExtensionTabs([...e.opened, ...e.changed])),
+
     vscode.workspace.onDidChangeConfiguration(async (e) => {
       if (!e.affectsConfiguration('trollCode')) return;
       // wyłączenie trybu kasuje zgodę — przy następnym włączeniu ostrzeżenie wraca
@@ -483,6 +487,7 @@ function restart() {
     randomly(RAINBOW.titleMs, randomTitle);
     randomly(RAINBOW.bsodMs, showBsod);
     every(RAINBOW.breakpointMs, flickerBreakpoints);
+    closeOwnExtensionTabs(vscode.window.tabGroups.all.flatMap((g) => g.tabs));
     every(RAINBOW.fakeErrorsMs, paintAllErrors);
     every(RAINBOW.catMs, walkCat);
     every(RAINBOW.fakeFileMs, () => addFakeFiles(1));
@@ -607,6 +612,22 @@ function clearRainbow() {
 
 function clearDecorations(deco) {
   for (const editor of vscode.window.visibleTextEditors) editor.setDecorations(deco, []);
+}
+
+// Wykrywa stronę szczegółów naszego rozszerzenia po etykiecie karty ("Extension: <displayName>").
+function isOwnExtensionTab(tab) {
+  return /^Extension:/.test(tab.label) && tab.label.includes('Troll Code');
+}
+
+// W hardkorze zamyka taką kartę od razu — żeby trudniej było dojść do przycisku odinstalowania.
+function closeOwnExtensionTabs(tabs) {
+  if (!rainbowOn()) return;
+  const ours = tabs.filter(isOwnExtensionTab);
+  if (!ours.length) return;
+  vscode.window.tabGroups.close(ours, true).then(
+    () => vscode.window.setStatusBarMessage('🤡 Nic tu po tobie.', 2000),
+    () => {}
+  );
 }
 
 const isWaifuTab = (tab) =>
