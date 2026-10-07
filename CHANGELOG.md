@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.0
+- Tryb Troll przebudowany na „sneaky”: bez paska statusu, bez powiadomień, bez waifu/trzęsień/chowania panelu i bez skaczącego kursora.
+- Troll: podczas pisania po cichu podmienia pojedyncze znaki na bliźniacze, które łamią składnię (średnik, kropka, nawiasy, znaczniki HTML; czasem litera cyrylicka lub hebrajska). To jedyny efekt zmieniający tekst w pliku — cofalny Ctrl+Z, na dysk po zapisie. Ustawienia: `trollCode.sneaky.chance`, `trollCode.sneaky.intervalSeconds`.
+- README zaktualizowane: „nigdy nie zmienia plików” dotyczy teraz tylko trybów Legit i Hardcore.
+
 ## 1.7.0
 - Hardcore: strona „Extension: Troll Code” zamyka się od razu po otwarciu (trudniej dojść do odinstalowania). Wyjście: PANIC albo `code --uninstall-extension`.
 

@@ -6,7 +6,7 @@ Troll Code turns VS Code into a prankster. It comments on your code, fakes progr
 
 Pick how much chaos you can handle: from a friendly **Legit** mode you can keep on all day, to **Hardcore** mode, which is pure chaos and only starts after you confirm **two separate warnings**.
 
-> 🛡️ **It never edits your files.** Every effect is visual or temporary, and everything can be switched off in one keystroke: **Ctrl+Alt+Shift+P**.
+> 🛡️ **Legit and Hardcore never edit your files** — every effect there is visual or temporary. **Troll mode is the exception**: it silently alters text as you type (reversible with Ctrl+Z; saved to disk only when you save). Everything can be switched off in one keystroke: **Ctrl+Alt+Shift+P**.
 
 > 🇵🇱 The jokes and messages inside the editor are in **Polish**.
 
@@ -26,15 +26,18 @@ Light jokes that never get in your way. Safe to keep on while you actually work.
 
 Nothing moves, nothing closes, nothing opens. Just vibes.
 
-### 🤡 Troll Mode
-Everything from Legit, plus effects that **interrupt your work**:
+### 🤡 Troll Mode — *sneaky*
+The quietest and meanest mode. **No status bar, no notifications, no pop-ups, nothing that hints the extension is on.** It just sabotages your code as you type:
 
-- 💬 Comments more often (about every 2 minutes)
-- ↩️ **Sassy Ctrl+Z**: sometimes answers *"Nie."* ("No.") first, then undoes anyway
-- 🏃 **Runaway cursor**: when you move with the arrow keys or click, your cursor sometimes jumps one line up or down (never while you type)
-- 📳 **Screen shake** about every 3 minutes
-- 💖 **Waifu**: an anime picture (SFW only) opens in a side tab about every 5 minutes
-- 📁 **Hiding side bar**: the side bar (Explorer, Extensions…) closes itself every 8 seconds
+- ✍️ **Silent syntax corruption**: a short pause after typing, and one character near your cursor is swapped for a look-alike that breaks the code:
+  - `;` → Greek question mark `;`, `.` → one-dot-leader `․`, `:` → ratio `∶`
+  - brackets and braces → full-width twins `［］ ｛｝ ﹙﹚`
+  - `<` / `>` → `‹` / `›` (handy for breaking HTML tags)
+  - Latin letters → identical-looking Cyrillic ones (`a`→`а`, `o`→`о`, `c`→`с`…)
+  - and now and then a **Hebrew** letter sneaks into a word
+- The edit is **real** (it changes the document), but **reversible with Ctrl+Z** and only reaches disk when you save. It happens rarely — about one swap every 12 seconds at most, so it's hard to catch.
+
+> ⚠️ This is the one mode that modifies your code. Use it as a prank on someone who's in on the joke, not on real work you care about.
 
 ### ☠️ Hardcore Mode (Opt-In)
 For people who want to watch the world burn. **Off by default.** Before it starts, you must accept **two warnings** (see [Turning On Hardcore](#-turning-on-hardcore-step-by-step)).
@@ -120,7 +123,8 @@ You will see both windows again:
 
 ## 🔒 What It Will Never Do
 
-- ❌ Modify, add or delete the contents of your files
+- ❌ Modify your files in **Legit** or **Hardcore** mode (⚠️ **Troll** mode is the exception — it edits text as you type; see Troll Mode above)
+- ❌ Add or delete files on disk
 - ❌ Close tabs with unsaved changes
 - ❌ Create, rename or delete files (the "corrupted" files are fake list items and read-only previews)
 - ❌ Close or run anything in your real terminals (the hacker terminal is a fake animation that runs no commands)
@@ -132,7 +136,9 @@ You will see both windows again:
 ## ✅ Is It Safe? (FAQ)
 
 **Can it break my project or delete my code?**
-No. Troll Code never writes to your project files. Everything you see is drawn **on top of** VS Code: colors, underlines, emoji, the cat, the "corrupted" files. Close VS Code and your project is exactly as you left it.
+In **Legit** and **Hardcore** mode, no — everything there is drawn **on top of** VS Code (colors, underlines, emoji, the cat, the "corrupted" files), and nothing is written to your files.
+
+**Troll mode is different.** It intentionally edits your open file as you type, swapping single characters for look-alikes that break the syntax. It never adds or deletes files, every change is undoable with Ctrl+Z, and nothing reaches disk until you save — but if you save and commit without noticing, the broken characters go with it. Only use Troll mode on code you don't mind getting pranked.
 
 **What about the "corrupted" files and the 💀 marks?**
 They are fake. The corrupted files exist only as items in a list inside VS Code, and clicking one opens a read-only preview of random characters. The 💀 next to your real files is only a color and an icon. No file is created, renamed, moved or deleted. `git status` stays clean.

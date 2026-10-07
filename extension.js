@@ -111,6 +111,26 @@ const RAINBOW = {
   breakpointMax: 6,
 };
 
+// Znaki, które wyglądają jak oryginał, ale łamią składnię (homoglify).
+const SNEAKY_SWAPS = {
+  ';': ';',   // U+037E grecki znak zapytania
+  '.': '․',   // U+2024 one dot leader
+  ',': '‚',   // U+201A pojedynczy dolny cudzysłów
+  ':': '∶',   // U+2236 ratio
+  '(': '﹙', ')': '﹚',   // small form parens
+  '[': '［', ']': '］',   // fullwidth brackets
+  '{': '｛', '}': '｝',   // fullwidth braces
+  '<': '‹', '>': '›',   // single angle quotation marks
+  '=': '᐀',   // canadian syllabics hyphen (wygląda jak =)
+  '-': '‐',   // U+2010 hyphen (nie myślnik ASCII)
+  "'": 'ʼ',   // modifier letter apostrophe
+  '"': '＂',   // fullwidth quotation mark
+};
+// Łacińskie litery -> cyrylickie bliźniaki (ten sam wygląd, inny znak).
+const CYRILLIC_TWINS = { a: 'а', e: 'е', o: 'о', c: 'с', p: 'р', x: 'х', y: 'у', s: 'ѕ', i: 'і', j: 'ј' };
+// „Pisanie po izraelsku”: losowa litera hebrajska wstawiana w słowo.
+const HEBREW = 'אבגדהוזחטיכלמנסעפצקרשת';
+
 const FONTS = [
   'Comic Sans MS', 'Impact', 'Times New Roman', 'Segoe Script', 'Gabriola',
   'Ink Free', 'Courier New', 'Georgia', 'Papyrus', 'Brush Script MT', 'Lucida Handwriting',
@@ -263,6 +283,9 @@ let corrupted = new Set();
 let workspaceFiles = [];
 let fileDecoEmitter;
 let sidebarPausedUntil = 0;
+let sneakyEditing = false;      // nasza edycja w toku — żeby nie zapętlić
+let sneakyTimer;
+let lastSneakyAt = 0;
 let bsodPanel;
 const trollBreakpoints = new Map(); // breakpoint -> czas dodania
 const cat = { uri: undefined, line: 0, x: 0, straining: 0, poops: [] };
@@ -359,7 +382,7 @@ function activate(context) {
     vscode.commands.registerCommand('trollCode.bsodNow', () => showBsod()),
 
     vscode.commands.registerCommand('trollCode.sassyUndo', async () => {
-      const chance = rainbowOn() ? RAINBOW.sassyUndoChance : trollOn('sassyUndo.enabled') ? 0.3 : 0;
+      const chance = rainbowOn() ? RAINBOW.sassyUndoChance : 0;
       if (Math.random() < chance) {
         vscode.window.setStatusBarMessage('🤡 Nie.', 1500);
         await sleep(700);
@@ -368,6 +391,8 @@ function activate(context) {
     }),
 
     vscode.workspace.onDidSaveTextDocument(() => {
+      // tryb Troll jest „sneaky” — żadnych powiadomień
+      if (mode() === 'troll' && !rainbowOn()) return;
       const chance = mode() === 'legit'
         ? Math.min(cfg().get('onSave.chance'), LEGIT.onSaveMaxChance)
         : cfg().get('onSave.chance');
@@ -375,6 +400,8 @@ function activate(context) {
         vscode.window.showInformationMessage('💾 ' + pick(SAVE_MESSAGES));
       }
     }),
+
+    vscode.workspace.onDidChangeTextDocument(onUserTyped),
 
     vscode.window.onDidChangeTextEditorSelection(onSelectionChange),
 
@@ -457,15 +484,20 @@ function restart() {
   // Tryb włączony w ustawieniach, ale bez zgody — najpierw ostrzeżenie.
   if (rainbowRequested() && !rainbowOn()) askForHardcoreConsent();
 
-  if (cfg().get('statusBar.enabled') || rainbowOn()) every(rainbowOn() ? 500 : 3000, updateStatusBar);
+  // Tryb Troll jest „sneaky”: żaden widoczny element się nie włącza.
+  const sneaky = mode() === 'troll' && !rainbowOn();
 
-  const messageMs = mode() === 'legit'
-    ? Math.max(minutes('messages.intervalMinutes'), LEGIT.messagesMinMinutes * 60000)
-    : minutes('messages.intervalMinutes');
-  randomly(messageMs, () => {
-    if (on('messages.enabled')) showRandomMessage();
-    if (on('fakeWarnings.enabled') && Math.random() < 0.5) addFakeWarning();
-  });
+  if (!sneaky && (cfg().get('statusBar.enabled') || rainbowOn())) every(rainbowOn() ? 500 : 3000, updateStatusBar);
+
+  if (!sneaky) {
+    const messageMs = mode() === 'legit'
+      ? Math.max(minutes('messages.intervalMinutes'), LEGIT.messagesMinMinutes * 60000)
+      : minutes('messages.intervalMinutes');
+    randomly(messageMs, () => {
+      if (on('messages.enabled')) showRandomMessage();
+      if (on('fakeWarnings.enabled') && Math.random() < 0.5) addFakeWarning();
+    });
+  }
 
   if (rainbowOn()) {
     every(100, paintRainbow);
@@ -506,10 +538,8 @@ function restart() {
     return;
   }
 
-  // Poniższe efekty przeszkadzają w pracy, więc działają tylko w trybie Troll.
-  if (trollOn('shake.enabled')) randomly(minutes('shake.intervalMinutes'), shakeScreen);
-  if (trollOn('waifu.enabled')) randomly(minutes('waifu.intervalMinutes'), showWaifu);
-  if (trollOn('hideSidebar.enabled')) every(Math.max(1000, cfg().get('hideSidebar.intervalSeconds') * 1000), hideSidebar);
+  // Tryb Troll jest teraz „sneaky”: bez paska, bez powiadomień, bez otwierania kart.
+  // Jedyny efekt to po cichu psuta składnia podczas pisania (patrz onUserTyped).
 }
 
 async function switchMode() {
@@ -1141,6 +1171,65 @@ function corruptedContent(name) {
   return lines.join('\n');
 }
 
+// --- sneaky: po cichu psuta składnia podczas pisania --------------------------
+// UWAGA: to jedyny efekt, który naprawdę zmienia tekst w pliku (cofalny Ctrl+Z,
+// na dysk trafia dopiero po zapisie). Działa tylko w trybie Troll.
+
+const SNEAKY_CHARS = new Set(Object.keys(SNEAKY_SWAPS));
+
+function onUserTyped(e) {
+  if (sneakyEditing) return;
+  if (mode() !== 'troll' || rainbowOn() || !cfg().get('enabled')) return;
+  if (e.document.uri.scheme !== 'file') return;
+  const editor = vscode.window.activeTextEditor;
+  if (!editor || editor.document !== e.document) return;
+  // tylko gdy to użytkownik coś dopisał (nie wklejił całości, nie undo)
+  if (e.reason !== undefined) return;
+  if (!e.contentChanges.some((c) => c.text.length > 0 && c.text.length <= 2)) return;
+
+  clearTimeout(sneakyTimer);
+  sneakyTimer = setTimeout(() => safely(() => corruptOnce(editor)), 500);
+}
+
+// Jedna podmiana na raz, rzadko, w okolicy miejsca pisania.
+async function corruptOnce(editor) {
+  if (mode() !== 'troll' || rainbowOn()) return;
+  const now = Date.now();
+  const minGap = Math.max(1000, (cfg().get('sneaky.intervalSeconds') || 12) * 1000);
+  if (now - lastSneakyAt < minGap) return;
+  if (Math.random() > (cfg().get('sneaky.chance') ?? 0.5)) return;
+
+  const doc = editor.document;
+  const caret = editor.selection.active.line;
+  const from = Math.max(0, caret - 6);
+  const candidates = [];
+  for (let ln = from; ln <= Math.min(caret, doc.lineCount - 1); ln++) {
+    const text = doc.lineAt(ln).text;
+    for (let ch = 0; ch < text.length; ch++) {
+      if (SNEAKY_CHARS.has(text[ch])) candidates.push({ ln, ch, kind: 'swap', c: text[ch] });
+      else if (/[a-z]/.test(text[ch]) && CYRILLIC_TWINS[text[ch]]) candidates.push({ ln, ch, kind: 'twin', c: text[ch] });
+    }
+  }
+  if (!candidates.length) return;
+  const pick1 = pick(candidates);
+
+  let replacement;
+  if (pick1.kind === 'swap') replacement = SNEAKY_SWAPS[pick1.c];
+  else if (Math.random() < 0.3) replacement = pick([...HEBREW]);        // czasem od razu hebrajski
+  else replacement = CYRILLIC_TWINS[pick1.c];
+
+  const range = new vscode.Range(pick1.ln, pick1.ch, pick1.ln, pick1.ch + 1);
+  sneakyEditing = true;
+  try {
+    const edit = new vscode.WorkspaceEdit();
+    edit.replace(doc.uri, range, replacement);
+    await vscode.workspace.applyEdit(edit);
+    lastSneakyAt = now;
+  } finally {
+    setTimeout(() => (sneakyEditing = false), 50);
+  }
+}
+
 // --- fałszywy niebieski ekran (BSOD) ------------------------------------------
 
 async function showBsod() {
@@ -1482,18 +1571,22 @@ function updateStatusBar() {
     const flair = pick(['🌈', '🔥', '💀', '🤡', '💖']);
     statusItem.text = `${flair} HARDKOR ${flair} ${pick(PROGRESS_TASKS)}… ${Math.floor(Math.random() * 100)}%`;
     statusItem.tooltip = 'Tryb Hardcore. Kliknij, żeby zmienić tryb (albo Ctrl+Alt+Shift+P = PANIC).';
+  } else if (mode() === 'troll') {
+    // tryb Troll jest „sneaky” — pasek statusu znika, żeby nic nie zdradzało rozszerzenia
+    statusItem.hide();
+    return;
   } else {
-    const icon = mode() === 'legit' ? '😇' : '🤡';
     const percent = Math.random() < 0.1 ? 99 : Math.floor(Math.random() * 100);
-    statusItem.text = cfg().get('statusBar.enabled') ? `$(sync~spin) ${icon} ${pick(PROGRESS_TASKS)}… ${percent}%` : icon;
-    statusItem.tooltip = `Troll Code — tryb ${mode() === 'legit' ? 'Legit' : 'Troll'}. Kliknij, żeby zmienić tryb.`;
+    statusItem.text = cfg().get('statusBar.enabled') ? `$(sync~spin) 😇 ${pick(PROGRESS_TASKS)}… ${percent}%` : '😇';
+    statusItem.tooltip = 'Troll Code — tryb Legit. Kliknij, żeby zmienić tryb.';
   }
   statusItem.show();
 }
 
 function onSelectionChange(e) {
   if (jumping) return;
-  if (!rainbowOn() && !trollOn('cursorJump.enabled')) return;
+  // w trybie Troll kursor nie skacze — ma być niezauważalnie; tylko Hardcore
+  if (!rainbowOn()) return;
   // strzałki i kliknięcia myszką (przy pisaniu nie skaczemy, żeby nikt nie wpisał tekstu w złe miejsce)
   const kinds = [vscode.TextEditorSelectionChangeKind.Keyboard, vscode.TextEditorSelectionChangeKind.Mouse];
   if (!kinds.includes(e.kind)) return;
