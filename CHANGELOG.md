@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.1
+- Przygotowanie do Marketplace: wydawca `bochenek11`, ikona rozszerzenia, link do repozytorium GitHub.
+
 ## 1.6.0
 - Hardcore: fałszywy niebieski ekran (BSOD) co ~90 s, który zmienia się w „Żart 🤡” i sam znika po ~12 s. Komenda „Niebieski ekran (BSOD) teraz”.
 - Hardcore: fałszywe breakpointy pojawiają się i znikają na losowych linijkach (nigdy podczas debugowania, sprzątane są tylko własne).

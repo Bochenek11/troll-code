@@ -169,7 +169,7 @@ Press **Ctrl+Alt+Shift+P** (Mac: **Cmd+Alt+Shift+P**). Everything stops at once 
 Press PANIC first, then uninstall from the Extensions view, or from a terminal:
 
 ```bash
-code --uninstall-extension <publisher>.troll-code
+code --uninstall-extension bochenek11.troll-code
 ```
 
 ---
@@ -179,7 +179,7 @@ code --uninstall-extension <publisher>.troll-code
 ### From the VS Code Marketplace
 1. Open VS Code
 2. Press **Ctrl+P** (Mac: **Cmd+P**)
-3. Type `ext install <publisher>.troll-code`
+3. Type `ext install bochenek11.troll-code`
 4. Press **Enter**
 
 ### From a VSIX File
@@ -319,7 +319,7 @@ Hardcore Mode uses its own fixed, much faster timings.
 ### I can't reach the Extensions view to uninstall
 - Press **Ctrl+Alt+Shift+P** first, or uninstall from a terminal:
   ```bash
-  code --uninstall-extension <publisher>.troll-code
+  code --uninstall-extension bochenek11.troll-code
   ```
 
 ---
