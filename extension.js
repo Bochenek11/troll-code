@@ -354,6 +354,7 @@ let shaking = false;
 let confirming = false;
 const waifuPanels = new Set();
 let hardcoreSnapshot = null;   // karty otwarte w chwili włączenia Hardcore
+let priorityUntil = 0;         // do tego czasu BSOD/„Gratulacje” mają pierwszeństwo (brak migania kart)
 let rainbowDecorations = [];
 let rainbowOffset = 0;
 let clownDeco;
@@ -805,6 +806,8 @@ function closeTabs() {
 let flickering = false;
 async function flickerCodeTabs() {
   if (flickering) return;
+  // BSOD i „Gratulacje” mają pierwszeństwo — nie przełączamy na kod, gdy są na wierzchu
+  if (bsodPanel || Date.now() < priorityUntil) return;
   const codeTabs = vscode.window.tabGroups.all
     .flatMap((g) => g.tabs)
     .filter((t) => isCodeTab(t) && !t.isDirty);
@@ -1597,6 +1600,7 @@ function showCongrats() {
     );
     congratsPanel.onDidDispose(() => (congratsPanel = undefined));
   }
+  priorityUntil = Date.now() + 8000;   // 8 s bez migania kart, żeby było widać mema
   playSoundOnce('congrats.mp3');   // dźwięk przez system, nie webview
   const nonce = Math.random().toString(36).slice(2);
   congratsPanel.webview.html = `<!DOCTYPE html>
@@ -1632,6 +1636,7 @@ function showCongrats() {
 
 async function showBsod() {
   if (bsodPanel) return;
+  priorityUntil = Date.now() + ms('bsodDurationMs') + 1000;   // bez migania kart na czas BSOD
   bsodPanel = vscode.window.createWebviewPanel(
     'trollCode.bsod',
     ':(',

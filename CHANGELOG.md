@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.17.1
+- BSOD i „Gratulacje” mają teraz pierwszeństwo: miganie/zamiana plików z kodem pauzuje, gdy są na wierzchu, więc już ich nie zasłania.
+
 ## 1.17.0
 - Pliki z kodem (js, ts, html, css, c, cpp, py, java, cs, go, rs, php, rb, json…) nie są już zamykane na stałe — zamiast tego migają (znikają na chwilę i wracają) albo zmieniają kolejność. Interwał: `trollCode.hardcore.codeFlickerMs`.
 - Jednorazowe dźwięki (np. „Gratulacje”) wyłączają się od razu po wyłączeniu Hardcore, a nie dopiero po dograniu pliku.

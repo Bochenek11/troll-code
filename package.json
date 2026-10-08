@@ -2,7 +2,7 @@
   "name": "troll-code",
   "displayName": "Troll Code 🤡",
   "description": "A prank extension for VS Code with three modes: Legit (light jokes), Troll (annoying) and opt-in Hardcore (pure chaos). Never edits your files. Panic button: Ctrl+Alt+Shift+P.",
-  "version": "1.17.0",
+  "version": "1.17.1",
   "publisher": "bochenek11",
   "icon": "icon.png",
   "license": "MIT",
