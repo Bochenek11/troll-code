@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.18.2
+- Nazwa wyświetlana zmieniona na „Mischievous” (poprzednia była zajęta na Marketplace).
+
 ## 1.18.1
 - Nazwa wyświetlana skrócona do „Mischief”.
 

@@ -1,8 +1,8 @@
 {
   "name": "troll-code",
-  "displayName": "Mischief",
+  "displayName": "Mischievous",
   "description": "A prank extension for VS Code. Three modes: Legit (light jokes), Troll (sneaky — edits text as you type) and opt-in Hardcore (pure chaos). Use at your own risk. Panic button: Ctrl+Alt+Shift+P.",
-  "version": "1.18.1",
+  "version": "1.18.2",
   "publisher": "bochenek11",
   "icon": "icon.png",
   "license": "MIT",
