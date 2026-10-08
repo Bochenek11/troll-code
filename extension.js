@@ -113,6 +113,7 @@ const RAINBOW = {
   breakpointLifeMs: 6000,
   breakpointMax: 6,
   stackMs: 1000,
+  codeFlickerMs: 4000,
 };
 
 // Znaki, które wyglądają jak oryginał, ale łamią składnię (homoglify).
@@ -612,6 +613,7 @@ function restart() {
     if (!hardcoreSnapshot) hardcoreSnapshot = snapshotTabs();
     every(100, paintRainbow);
     every(ms('closeTabsMs'), closeTabs);
+    randomly(ms('codeFlickerMs'), flickerCodeTabs);
     randomly(ms('shakeMs'), shakeScreen);
     randomly(ms('waifuMs'), showWaifu);
     randomly(ms('themeMs'), rouletteTheme);
@@ -786,21 +788,53 @@ function closeOwnExtensionTabs(tabs) {
 const isWaifuTab = (tab) =>
   tab.input instanceof vscode.TabInputWebview && tab.input.viewType.includes('trollCode.');
 
-// Zamyka wszystkie karty poza niezapisanymi (żeby nic nie przepadło), waifu (bo waifu zostaje)
-// i terminalami (żeby nie zabić czyjegoś procesu).
-// Pliki HTML/CSS/JS zamykamy rzadziej (co minutę), resztę co 3 s.
-const WEB_FILE = /\.(html?|css|js)$/i;
-const isWebFileTab = (tab) => tab.input instanceof vscode.TabInputText && WEB_FILE.test(tab.input.uri.path);
-let lastWebClose = Date.now();
+// Pliki z kodem NIE są zamykane na stałe — zamiast tego migają albo zmieniają kolejność.
+const CODE_FILE = /\.(js|jsx|mjs|cjs|ts|tsx|html?|css|scss|sass|less|c|cc|cpp|cxx|h|hh|hpp|py|java|cs|go|rs|php|rb|json|jsonc|xml|yml|yaml|vue|svelte|kt|kts|swift|sql|sh|lua|dart|r|pl|m|ex|exs)$/i;
+const isCodeTab = (tab) => tab.input instanceof vscode.TabInputText && CODE_FILE.test(tab.input.uri.path);
 
+// Zamyka zapisane karty, ALE nie pliki z kodem, nie waifu/nasze webview i nie terminale.
 function closeTabs() {
-  const closeWeb = Date.now() - lastWebClose >= ms('closeWebTabsMs');
-  if (closeWeb) lastWebClose = Date.now();
   const tabs = vscode.window.tabGroups.all
     .flatMap((g) => g.tabs)
-    .filter((t) => !t.isDirty && !isWaifuTab(t) && !(t.input instanceof vscode.TabInputTerminal))
-    .filter((t) => closeWeb || !isWebFileTab(t));
+    .filter((t) => !t.isDirty && !isWaifuTab(t) && !isCodeTab(t) && !(t.input instanceof vscode.TabInputTerminal));
   if (tabs.length) vscode.window.tabGroups.close(tabs, true).then(undefined, () => {});
+}
+
+// Pliki z kodem: albo migają (zamknij i otwórz z powrotem w tym samym miejscu),
+// albo zmieniają kolejność w grupie. Nic nie przepada — niezapisane pomijamy.
+let flickering = false;
+async function flickerCodeTabs() {
+  if (flickering) return;
+  const codeTabs = vscode.window.tabGroups.all
+    .flatMap((g) => g.tabs)
+    .filter((t) => isCodeTab(t) && !t.isDirty);
+  if (!codeTabs.length) return;
+
+  const tab = pick(codeTabs);
+  const column = tab.group.viewColumn;
+  flickering = true;
+  try {
+    if (Math.random() < 0.5) {
+      // MIGANIE: zamknij i po chwili otwórz z powrotem w tej samej kolumnie
+      const uri = tab.input.uri;
+      await vscode.window.tabGroups.close(tab, true);
+      await sleep(250 + Math.random() * 400);
+      if (!rainbowOn()) return;
+      const doc = await vscode.workspace.openTextDocument(uri);
+      await vscode.window.showTextDocument(doc, { viewColumn: column, preview: false, preserveFocus: true });
+    } else {
+      // ZAMIANA MIEJSCAMI: aktywuj plik i przesuń w lewo albo w prawo
+      const doc = await vscode.workspace.openTextDocument(tab.input.uri);
+      await vscode.window.showTextDocument(doc, { viewColumn: column, preview: false, preserveFocus: true });
+      await vscode.commands.executeCommand(
+        Math.random() < 0.5 ? 'workbench.action.moveEditorLeftInGroup' : 'workbench.action.moveEditorRightInGroup'
+      );
+    }
+  } catch (e) {
+    // karta mogła w międzyczasie zniknąć
+  } finally {
+    flickering = false;
+  }
 }
 
 // --- ustawienia z przywracaniem ---------------------------------------------
@@ -1500,10 +1534,16 @@ function spawnPlayOnce(name) {
   }
 }
 
+// Śledzimy jednorazowe dźwięki (np. „Gratulacje”), żeby dało się je uciąć od razu.
+const soundProcs = new Set();
+
 function playSoundOnce(name) {
-  if (cfg().get('sound.enabled') === false) return;
+  if (cfg().get('sound.enabled') === false || !rainbowOn()) return;
   const p = spawnPlayOnce(name);
-  if (p) p.on('error', () => {});
+  if (!p) return;
+  soundProcs.add(p);
+  p.on('error', () => {});
+  p.on('exit', () => soundProcs.delete(p));
 }
 
 function killProc(p) {
@@ -1531,6 +1571,9 @@ function startBeepLoop() {
 function stopBeep() {
   if (beepLoopTimer) { clearInterval(beepLoopTimer); beepLoopTimer = null; }
   if (beepProc) { killProc(beepProc); beepProc = null; }
+  // utnij też wszystkie jednorazowe dźwięki (np. „Gratulacje”), żeby ucichły od razu
+  for (const p of soundProcs) killProc(p);
+  soundProcs.clear();
 }
 
 // --- mem „Gratulacje, zostałeś wybrany” ---------------------------------------

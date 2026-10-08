@@ -50,7 +50,7 @@ For people who want to watch the world burn. **Off by default.** Before it start
 Everything from Troll Mode, turned up, **plus**:
 
 - 🌈 Rainbow-animated code text
-- 🗂️ Saved tabs close **every 3 seconds** (HTML, CSS and JS files every minute; unsaved tabs, terminals and waifus are never closed)
+- 🗂️ Saved tabs close **every 3 seconds** — but **code files are never closed** (js, ts, html, css, c, cpp, py, java, cs, go, rs, php, rb, json…); instead they **flicker** (vanish for a moment and come back) or **swap places**. Unsaved tabs, terminals and waifus are never touched
 - 🎰 **Theme roulette**: a random color theme every ~3 seconds
 - 🔤 **Font chaos**: the font size pulses and the font family keeps changing (Comic Sans, Impact…)
 - ❌ **All your code is red**: every line gets a fake error such as *"SyntaxError: brak wiary w siebie"* ("lack of self-confidence"), and the Problems panel shows **9999 problems**
@@ -297,8 +297,8 @@ Every Hardcore effect's interval can be changed under `trollCode.hardcore.*`. Va
 
 | Setting | Default (ms) | Controls |
 |---|---|---|
-| `trollCode.hardcore.closeTabsMs` | 3000 | closing saved tabs |
-| `trollCode.hardcore.closeWebTabsMs` | 60000 | closing HTML/CSS/JS files |
+| `trollCode.hardcore.closeTabsMs` | 3000 | closing saved tabs (code files are never closed) |
+| `trollCode.hardcore.codeFlickerMs` | 4000 | flickering / swapping code files (js, html, css, cpp…) |
 | `trollCode.hardcore.shakeMs` | 4000 | screen shake |
 | `trollCode.hardcore.waifuMs` | 20000 | new waifu |
 | `trollCode.hardcore.themeMs` | 3000 | theme roulette |

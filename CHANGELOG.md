@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.17.0
+- Pliki z kodem (js, ts, html, css, c, cpp, py, java, cs, go, rs, php, rb, json…) nie są już zamykane na stałe — zamiast tego migają (znikają na chwilę i wracają) albo zmieniają kolejność. Interwał: `trollCode.hardcore.codeFlickerMs`.
+- Jednorazowe dźwięki (np. „Gratulacje”) wyłączają się od razu po wyłączeniu Hardcore, a nie dopiero po dograniu pliku.
+
+
 ## 1.16.1
 - Okna zgody (Troll i oba Hardcore) mają teraz „Cancel” jako domyślny przycisk — Enter anuluje, więc nie da się włączyć czegoś przez przypadkowe wciśnięcie Enter.
 

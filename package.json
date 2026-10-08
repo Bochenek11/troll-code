@@ -2,7 +2,7 @@
   "name": "troll-code",
   "displayName": "Troll Code 🤡",
   "description": "A prank extension for VS Code with three modes: Legit (light jokes), Troll (annoying) and opt-in Hardcore (pure chaos). Never edits your files. Panic button: Ctrl+Alt+Shift+P.",
-  "version": "1.16.1",
+  "version": "1.17.0",
   "publisher": "bochenek11",
   "icon": "icon.png",
   "license": "MIT",
@@ -1507,6 +1507,7 @@
           "minimum": 50,
           "description": "[tryb Hardcore] Odstęp w milisekundach: jak długo trzyma się jeden fałszywy breakpoint. Domyślnie 6000 ms."
         },
+        "trollCode.hardcore.codeFlickerMs": { "type": "number", "default": 4000, "minimum": 50, "description": "[tryb Hardcore] Odstęp w milisekundach: miganie/zamiana plików z kodem (js, html, css, cpp…). Domyślnie 4000 ms." },
         "trollCode.hardcore.stackMs": {
           "type": "number",
           "default": 1000,
