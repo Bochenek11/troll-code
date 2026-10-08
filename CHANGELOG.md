@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.18.1
+- Nazwa wyświetlana skrócona do „Mischief”.
+
 ## 1.18.0
 - Nazwa wyświetlana: „Mischief Mode” (było „Troll Code 🤡”). Nowa ikona (diabełek). Opis uczciwie opisuje tryby. Słowa kluczowe ograniczone do „prank”. ID i adres bez zmian (bochenek11.troll-code).
 
