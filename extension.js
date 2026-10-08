@@ -683,30 +683,27 @@ async function switchMode() {
   vscode.window.showInformationMessage(choice.id === 'legit' ? '😇 Tryb Legit. Będzie miło. Prawie.' : '🤡 Tryb Troll. Use at your own risk.');
 }
 
-// Troll edytuje tekst w plikach, więc też wymaga świadomej zgody.
-async function confirmTroll() {
+// Okno zgody z „Cancel” jako PIERWSZYM (domyślnym) przyciskiem — Enter anuluje,
+// żeby nie dało się włączyć czegoś przez przypadkowe wciśnięcie Enter.
+async function safeConfirm(title, detail, acceptLabel) {
   const choice = await vscode.window.showWarningMessage(
-    '🤡 Enable TROLL mode?',
-    { modal: true, detail: TROLL_DETAIL },
-    TROLL_ACCEPT
+    title,
+    { modal: true, detail },
+    'Cancel',       // pierwszy = domyślny (Enter) = anuluj
+    acceptLabel
   );
-  return choice === TROLL_ACCEPT;
+  return choice === acceptLabel;
+}
+
+// Troll edytuje tekst w plikach, więc też wymaga świadomej zgody.
+function confirmTroll() {
+  return safeConfirm('🤡 Enable TROLL mode?', TROLL_DETAIL, TROLL_ACCEPT);
 }
 
 // Dwa okna: najpierw pełna lista efektów, potem ostatnie ostrzeżenie. Anulowanie któregokolwiek = nic się nie włącza.
 async function confirmHardcore() {
-  const first = await vscode.window.showWarningMessage(
-    HARDCORE_TITLE,
-    { modal: true, detail: HARDCORE_DETAIL },
-    HARDCORE_ACCEPT
-  );
-  if (first !== HARDCORE_ACCEPT) return false;
-  const second = await vscode.window.showWarningMessage(
-    HARDCORE_FINAL_TITLE,
-    { modal: true, detail: HARDCORE_FINAL_DETAIL },
-    HARDCORE_FINAL_ACCEPT
-  );
-  return second === HARDCORE_FINAL_ACCEPT;
+  if (!(await safeConfirm(HARDCORE_TITLE, HARDCORE_DETAIL, HARDCORE_ACCEPT))) return false;
+  return safeConfirm(HARDCORE_FINAL_TITLE, HARDCORE_FINAL_DETAIL, HARDCORE_FINAL_ACCEPT);
 }
 
 async function askForHardcoreConsent() {

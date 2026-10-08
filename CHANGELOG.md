@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.16.1
+- Okna zgody (Troll i oba Hardcore) mają teraz „Cancel” jako domyślny przycisk — Enter anuluje, więc nie da się włączyć czegoś przez przypadkowe wciśnięcie Enter.
+
 ## 1.16.0
 - Czysty powrót z Hardcore: po wyłączeniu zamyka wszystko, co otworzył (waifu, gratulacje, BSOD, terminal hakera, fałszywy Explorer) i przywraca karty, które miałeś otwarte wcześniej — jakbyś w ogóle go nie włączał.
 - Dodane ostrzeżenie zdrowotne/epilepsji w oknie zgody na Hardcore i w README.
