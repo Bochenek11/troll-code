@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.18.0
+- Nazwa wyświetlana: „Mischief Mode” (było „Troll Code 🤡”). Nowa ikona (diabełek). Opis uczciwie opisuje tryby. Słowa kluczowe ograniczone do „prank”. ID i adres bez zmian (bochenek11.troll-code).
+
 ## 1.17.1
 - BSOD i „Gratulacje” mają teraz pierwszeństwo: miganie/zamiana plików z kodem pauzuje, gdy są na wierzchu, więc już ich nie zasłania.
 
