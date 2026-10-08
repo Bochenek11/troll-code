@@ -10,6 +10,8 @@ Pick how much chaos you can handle: from a friendly **Legit** mode you can keep 
 
 > 🇵🇱 The jokes and messages inside the editor are in **Polish**.
 
+> 🚨 **HEALTH / EPILEPSY WARNING.** **Hardcore mode** contains **rapidly flashing colors, fast-changing screens and constant movement**. **Do not use Hardcore mode if you have photosensitive epilepsy or any seizure disorder, or if flashing lights make you unwell.** It may also be stressful for people with anxiety. You must accept this warning before Hardcore starts, and you can stop everything instantly with **Ctrl+Alt+Shift+P**. Legit and Troll mode do not flash.
+
 > ⚖️ **Disclaimer — use at your own risk.** This is a joke extension provided **"as is", with no warranty of any kind** (see [LICENSE](LICENSE)). You install and enable it, including Troll and Hardcore mode, **entirely at your own risk**. The author is **not responsible** for any lost work, broken builds, misconfigured settings, or anything else that happens while it is enabled. Both Troll and Hardcore mode require you to accept an "at your own risk" warning before they start. If you don't accept that, don't enable them.
 
 ---
@@ -62,8 +64,8 @@ Everything from Troll Mode, turned up, **plus**:
 - 👻 **Ghost comments** like `// TODO: zmień zawód` ("change careers") appear and fade
 - 💀 **Fake hacker terminal**: five random themes — Hacker, Matrix, Crypto Miner, FBI and DOOM — each with its own colors and lines. Pure animated text, runs nothing
 - 🧱 **Explorer stack**: up to 100 fake "Explorer" icons pile up in the activity bar (they disappear when you leave Hardcore)
-- 🔊 **Beeping**: a looping McDonald's-style beep plays in the background (synthesized in a webview — no audio is downloaded; turn it off with `trollCode.sound.enabled`)
-- 🎉 **Fake prize pop-ups**: *"Congratulations, you've been selected as the 1,000,000th programmer!"* windows with a button that runs away from your cursor
+- 🔊 **Beeping**: a looping McDonald's fryer sound plays in the background (bundled audio file, played through the OS so it needs no clicking; turn it off with `trollCode.sound.enabled`)
+- 🎉 **Fake prize pop-ups**: *"Congratulations, you've been selected as the 1,000,000th programmer!"* windows with a sound and a button that runs away from your cursor
 - 🔀 **Layout roulette**: every few seconds one layout option changes on its own — side bar moves left/right, activity bar jumps to the top/bottom/hides, panel re-aligns, menu bar changes. All of it is restored when you leave Hardcore
 - 📳 Stronger, more frequent screen shakes (about every 4 seconds)
 - 💖 Waifus multiply (up to 4 tabs at once)
@@ -125,6 +127,7 @@ You will see both windows again:
 | 🔁 **Warnings come back** | Turning Hardcore off resets your consent. An update with new effects asks again too |
 | ♻️ **Settings restored** | Theme, font, font size, cursor style, line numbers, minimap and window title are saved before the first change and restored when Hardcore ends, even after a crash (on next start) |
 | 💾 **Your work is safe** | Unsaved tabs are never closed. Your files are never modified |
+| ↩️ **Clean exit** | When Hardcore ends, it closes everything it opened (waifu, prize pop-ups, blue screen, hacker terminal, the fake Explorer) and **reopens the tabs you had open before**, so your window looks like you never started it |
 
 ---
 
@@ -168,8 +171,8 @@ No. Fake breakpoints are only added when **no debug session is running**, so the
 **Is the blue screen real?**
 No. It's an editor tab that looks like a Windows BSOD. Nothing crashes and nothing restarts. It closes on its own after ~12 seconds, or you can close it like any tab.
 
-**Where does the beeping sound come from? Is it a download?**
-No download, and no copyrighted audio is bundled. The McDonald's-style beep is **generated live** with the Web Audio API (a ~2.7 kHz square-wave tone, pulsed quickly) inside a small webview tab. It only plays in Hardcore mode, you can turn it off with `trollCode.sound.enabled`, and **Ctrl+Alt+Shift+P silences it instantly** (the tab is closed). The fake prize pop-up makes the same kind of synthesized sound.
+**Where does the beeping sound come from?**
+From an audio file bundled with the extension. It is played **through your operating system's audio player** (on Windows via a hidden PowerShell `MediaPlayer`; `afplay` on macOS; `paplay`/`ffplay` on Linux), not streamed or downloaded. This is done so it plays without you having to click a tab (VS Code's webview blocks autoplay until you interact with it). It only plays in Hardcore mode, you can turn it off with `trollCode.sound.enabled`, and **Ctrl+Alt+Shift+P stops it instantly**. Each playback is a short background process that ends on its own, so if VS Code closes or crashes the sound stops by itself. The fake prize pop-up plays its own bundled sound the same way.
 
 **Are the "Congratulations, you've been selected" windows real? Do they collect anything?**
 No. They are static webview tabs with a joke message and a button that runs away from your cursor. They have **no form, no input and no link** — nothing is submitted, nothing is collected, and the button does nothing. The panel even says it's a joke. Close it like any tab, or press PANIC.

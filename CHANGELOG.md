@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.16.0
+- Czysty powrót z Hardcore: po wyłączeniu zamyka wszystko, co otworzył (waifu, gratulacje, BSOD, terminal hakera, fałszywy Explorer) i przywraca karty, które miałeś otwarte wcześniej — jakbyś w ogóle go nie włączał.
+- Dodane ostrzeżenie zdrowotne/epilepsji w oknie zgody na Hardcore i w README.
+
+## 1.15.0
+- Dźwięk gra teraz przez system (Windows: ukryty PowerShell MediaPlayer; mac: afplay; Linux: paplay/ffplay) zamiast webview — nie trzeba już nic klikać. Pisk leci w pętli, mem „Gratulacje” gra swój plik. PANIC zatrzymuje. Każde odtworzenie to krótki proces, więc po zamknięciu VS Code dźwięk cichnie sam.
+
+## 1.14.1
+- Dźwięk startuje łatwiej: karta beepa jest aktywna i reaguje na dowolną interakcję (klik, ruch myszki, klawisz), nie trzeba celować w zakładkę. (VS Code/Chromium blokuje autoodtwarzanie do pierwszej interakcji — tego nie da się w pełni obejść.)
+
+## 1.14.0
+- Dźwięki z plików: pisk w tle gra `media/mcdonalds-beep.mp3`, a mem „Gratulacje” gra `media/congrats.mp3` (zamiast syntezowanego pikania).
+
 ## 1.13.0
 - Zrzeczenie odpowiedzialności: tryb Troll ma teraz własne okno zgody („OK, at my own risk”), bo edytuje pliki. Hardcore i Troll mówią wprost „use at your own risk”.
 - README: sekcja Disclaimer („as is”, bez gwarancji, na własne ryzyko, autor nie odpowiada).

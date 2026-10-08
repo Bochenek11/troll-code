@@ -1,4 +1,5 @@
 const vscode = require('vscode');
+const cp = require('child_process');
 
 const RAINBOW_COLORS = ['#FF0000', '#FF8000', '#FFFF00', '#00FF00', '#0000FF', '#4000FF', '#8000FF'];
 
@@ -262,7 +263,9 @@ const LAYOUT_OPTIONS = [
 ];
 
 const HARDCORE_TITLE = '⚠️ Enable HARDCORE mode?';
-const HARDCORE_DETAIL = `This is a prank mode. It will deliberately make VS Code very hard to use:
+const HARDCORE_DETAIL = `⚠️ HEALTH WARNING: Hardcore mode has rapidly flashing colors, fast-changing screens and sudden movement. Do NOT enable it if you have photosensitive epilepsy or a seizure disorder, or if flashing lights make you unwell. It may also be stressful if you have anxiety. Stop any time with Ctrl+Alt+Shift+P.
+
+This is a prank mode. It will deliberately make VS Code very hard to use:
 
 • Rainbow-animated text in the editor
 • Closes all saved tabs every 3 seconds (HTML/CSS/JS files every minute; unsaved tabs are kept)
@@ -294,7 +297,7 @@ All changed settings (theme, font, cursor, line numbers, minimap, window title) 
 Your files are never modified and no data is collected.
 You can turn it off at any time with Ctrl+Alt+Shift+P (PANIC) or by clicking the status bar icon.`;
 // Podbić przy każdej zmianie listy efektów — wtedy ostrzeżenie pokaże się znowu.
-const HARDCORE_VERSION = 12;
+const HARDCORE_VERSION = 13;
 const HARDCORE_ACCEPT = "Yes, I know what I'm doing";
 // Drugie, ostatnie potwierdzenie.
 const HARDCORE_FINAL_TITLE = '☠️ Last chance!';
@@ -349,6 +352,7 @@ let jumping = false;
 let shaking = false;
 let confirming = false;
 const waifuPanels = new Set();
+let hardcoreSnapshot = null;   // karty otwarte w chwili włączenia Hardcore
 let rainbowDecorations = [];
 let rainbowOffset = 0;
 let clownDeco;
@@ -381,7 +385,8 @@ const sneakyReverse = new Map();
 // Pliki (uri jako string), w których coś podmieniliśmy.
 let sneakyTouched = new Set();
 let bsodPanel;
-let beepPanel;
+let beepProc = null;
+let beepLoopTimer = null;
 let congratsPanel;
 const trollBreakpoints = new Map(); // breakpoint -> czas dodania
 const cat = { uri: undefined, line: 0, x: 0, straining: 0, poops: [] };
@@ -577,7 +582,8 @@ function restart() {
   if (hackerTerminal) hackerTerminal.dispose();
   removeTrollBreakpoints();
   if (bsodPanel) bsodPanel.dispose();
-  if (!rainbowOn() && beepPanel) beepPanel.dispose();
+  if (!rainbowOn()) stopBeep();
+  if (!rainbowOn()) leaveHardcore();
   updateStatusBar();
   if (!rainbowOn()) restoreSettings();
   // wyjście z trybu Troll (zmiana trybu, PANIC, wyłączenie) cofa wszystkie podmiany znaków
@@ -603,6 +609,7 @@ function restart() {
   }
 
   if (rainbowOn()) {
+    if (!hardcoreSnapshot) hardcoreSnapshot = snapshotTabs();
     every(100, paintRainbow);
     every(ms('closeTabsMs'), closeTabs);
     randomly(ms('shakeMs'), shakeScreen);
@@ -625,7 +632,7 @@ function restart() {
     every(ms('stackMs'), stackExplorer);
     randomly(ms('congratsMs'), showCongrats);
     randomly(ms('layoutMs'), randomLayout);
-    if (cfg().get('sound.enabled') !== false) startBeeping();
+    if (cfg().get('sound.enabled') !== false) startBeepLoop();
     closeOwnExtensionTabs(vscode.window.tabGroups.all.flatMap((g) => g.tabs));
     every(ms('fakeErrorsMs'), paintAllErrors);
     every(ms('catMs'), walkCat);
@@ -1418,55 +1425,115 @@ async function revertSneaky() {
   }
 }
 
-// --- dźwięk: pisk jak z McDonalda (syntezowany, nic nie pobieramy) ------------
-// Alarm frytkownicy do nuggetsów: wysoki, przeszywający ton, szybkie piknięcia.
-// Odtwarzany przez Web Audio w webview (VS Code inaczej nie zagra dźwięku).
-const BEEP_SCRIPT = `
-  let __actx;
-  function __beep(freq, dur){
-    try{
-      __actx = __actx || new (window.AudioContext||window.webkitAudioContext)();
-      if(__actx.state==='suspended') __actx.resume();
-      const o=__actx.createOscillator(), g=__actx.createGain();
-      o.type='square'; o.frequency.value=freq;
-      const t=__actx.currentTime;
-      g.gain.setValueAtTime(0.0001,t);
-      g.gain.exponentialRampToValueAtTime(0.3,t+0.005);
-      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-      o.connect(g); g.connect(__actx.destination);
-      o.start(t); o.stop(t+dur+0.02);
-    }catch(e){}
-  }
-  // ciągłe, szybkie piszczenie ~2.7 kHz: 90 ms gra, 110 ms cisza
-  function __startBeepLoop(){ __beep(2700,0.09); setInterval(()=>__beep(2700,0.09), 200); }
-`;
+// --- powrót do stanu sprzed Hardcore -----------------------------------------
+// Zapamiętujemy otwarte pliki, a po wyjściu z Hardcore zamykamy wszystko, co otworzyliśmy
+// (waifu, gratulacje, BSOD, terminal, fałszywy Explorer) i przywracamy twoje karty.
 
-function startBeeping() {
-  if (beepPanel) return;
-  beepPanel = vscode.window.createWebviewPanel(
-    'trollCode.beep',
-    '🔊',
-    { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
-    { enableScripts: true, retainContextWhenHidden: true }
+function snapshotTabs() {
+  return vscode.window.tabGroups.all
+    .flatMap((g) => g.tabs)
+    .filter((t) => t.input instanceof vscode.TabInputText)
+    .map((t) => t.input.uri.toString());
+}
+
+function closeOurStuff() {
+  for (const p of [...waifuPanels]) { try { p.dispose(); } catch (e) { /* już zamknięte */ } }
+  waifuPanels.clear();
+  if (bsodPanel) { try { bsodPanel.dispose(); } catch (e) { /**/ } bsodPanel = undefined; }
+  if (congratsPanel) { try { congratsPanel.dispose(); } catch (e) { /**/ } congratsPanel = undefined; }
+  if (hackerTerminal) { try { hackerTerminal.dispose(); } catch (e) { /**/ } hackerTerminal = undefined; }
+  // na wszelki wypadek domknij wszelkie nasze karty webview
+  const ours = vscode.window.tabGroups.all
+    .flatMap((g) => g.tabs)
+    .filter((t) => t.input instanceof vscode.TabInputWebview && t.input.viewType.includes('trollCode.'));
+  if (ours.length) vscode.window.tabGroups.close(ours, true).then(undefined, () => {});
+}
+
+function leaveHardcore() {
+  if (!hardcoreSnapshot) return;
+  const snap = hardcoreSnapshot;
+  hardcoreSnapshot = null;
+  closeOurStuff();
+  // które z twoich plików zniknęły w trakcie? otwórz je z powrotem
+  const open = new Set(
+    vscode.window.tabGroups.all
+      .flatMap((g) => g.tabs)
+      .filter((t) => t.input instanceof vscode.TabInputText)
+      .map((t) => t.input.uri.toString())
   );
-  beepPanel.onDidDispose(() => (beepPanel = undefined));
-  const nonce = Math.random().toString(36).slice(2);
-  beepPanel.webview.html = `<!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';">
-<style>
-  body{margin:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
-       background:#111;color:#ffd200;font-family:sans-serif;text-align:center;gap:12px}
-  .m{font-size:64px}
-</style></head>
-<body>
-  <div class="m">🍟</div>
-  <p>Nuggetsy gotowe.<br>beep beep beep beep…</p>
-  <script nonce="${nonce}">
-    ${BEEP_SCRIPT}
-    __startBeepLoop();
-  </script>
-</body></html>`;
+  for (const uriStr of snap) {
+    if (open.has(uriStr)) continue;
+    vscode.workspace.openTextDocument(vscode.Uri.parse(uriStr)).then(
+      (doc) => vscode.window.showTextDocument(doc, { preview: false, preserveFocus: true }),
+      () => {}
+    );
+  }
+}
+
+// --- dźwięk: odtwarzanie przez system (omija blokadę autoodtwarzania w webview) --
+// Każde odtworzenie to krótki proces, który sam kończy się po pliku. Dzięki temu
+// jeśli VS Code padnie, dźwięk ucichnie sam (nie ma procesu, który gra w nieskończoność).
+
+function soundFile(name) {
+  return vscode.Uri.joinPath(ctx.extensionUri, 'media', name).fsPath;
+}
+
+// Odtwarza plik RAZ w tle i zwraca proces (albo null, gdy się nie udało).
+function spawnPlayOnce(name) {
+  const file = soundFile(name);
+  try {
+    if (process.platform === 'win32') {
+      const ps =
+        'Add-Type -AssemblyName presentationCore;' +
+        '$p=New-Object System.Windows.Media.MediaPlayer;' +
+        '$p.Open([uri]$env:TC_SOUND);' +
+        '$n=0; while(-not $p.NaturalDuration.HasTimeSpan -and $n -lt 50){Start-Sleep -Milliseconds 100;$n++};' +
+        '$p.Play();' +
+        '$d= if($p.NaturalDuration.HasTimeSpan){$p.NaturalDuration.TimeSpan.TotalSeconds}else{8};' +
+        'Start-Sleep -Seconds ([math]::Ceiling($d)+1)';
+      return cp.spawn('powershell', ['-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-Command', ps],
+        { windowsHide: true, env: { ...process.env, TC_SOUND: file } });
+    }
+    if (process.platform === 'darwin') return cp.spawn('afplay', [file]);
+    // Linux: paplay, a jak nie ma — ffplay
+    return cp.spawn('bash', ['-c', 'paplay "$0" 2>/dev/null || ffplay -nodisp -autoexit -loglevel quiet "$0"', file]);
+  } catch (e) {
+    console.warn('[Troll Code] audio:', e && e.message);
+    return null;
+  }
+}
+
+function playSoundOnce(name) {
+  if (cfg().get('sound.enabled') === false) return;
+  const p = spawnPlayOnce(name);
+  if (p) p.on('error', () => {});
+}
+
+function killProc(p) {
+  try {
+    if (process.platform === 'win32') cp.exec('taskkill /pid ' + p.pid + ' /t /f');
+    else p.kill('SIGKILL');
+  } catch (e) {
+    // trudno
+  }
+}
+
+// Pętla: gdy poprzednie odtworzenie się skończy, od razu startuje następne → ciągły pisk.
+function startBeepLoop() {
+  if (beepLoopTimer) return;
+  const tick = () => {
+    if (beepProc) return;             // jeszcze gra
+    beepProc = spawnPlayOnce('mcdonalds-beep.mp3');
+    if (beepProc) beepProc.on('exit', () => (beepProc = null));
+    else beepProc = null;
+  };
+  tick();
+  beepLoopTimer = setInterval(tick, 500);
+}
+
+function stopBeep() {
+  if (beepLoopTimer) { clearInterval(beepLoopTimer); beepLoopTimer = null; }
+  if (beepProc) { killProc(beepProc); beepProc = null; }
 }
 
 // --- mem „Gratulacje, zostałeś wybrany” ---------------------------------------
@@ -1486,10 +1553,11 @@ function showCongrats() {
       'trollCode.congrats',
       '🎉 Gratulacje!',
       { viewColumn: vscode.ViewColumn.Active, preserveFocus: false },
-      { enableScripts: true }
+      { enableScripts: true, localResourceRoots: [ctx.extensionUri] }
     );
     congratsPanel.onDidDispose(() => (congratsPanel = undefined));
   }
+  playSoundOnce('congrats.mp3');   // dźwięk przez system, nie webview
   const nonce = Math.random().toString(36).slice(2);
   congratsPanel.webview.html = `<!DOCTYPE html>
 <html><head><meta charset="UTF-8">
@@ -1512,10 +1580,6 @@ function showCongrats() {
     <p class="small">🤡 Żart. Niczego nie wygrałeś. Zamknij tę kartę.</p>
   </div>
   <script nonce="${nonce}">
-    ${BEEP_SCRIPT}
-    // fanfary: trzy wznoszące piknięcia, a potem to samo piszczenie co w tle
-    __beep(1047,0.15); setTimeout(()=>__beep(1319,0.15),160); setTimeout(()=>__beep(1568,0.3),320);
-    setTimeout(__startBeepLoop, 700);
     // przycisk ucieka od kursora — klasyka
     const b=document.getElementById('b');
     b.addEventListener('mouseover',()=>{b.style.transform='translate('+(Math.random()*40-20)+'vw,'+(Math.random()*30-15)+'vh)';});
@@ -1927,6 +1991,7 @@ function onSelectionChange(e) {
 
 function deactivate() {
   stopTimers();
+  stopBeep();
   removeTrollBreakpoints();
   return restoreSettings();
 }

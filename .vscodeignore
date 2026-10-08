@@ -1,3 +1,5 @@
 .vscode/**
 *.vsix
 .gitignore
+*.mp3
+!media/*.mp3

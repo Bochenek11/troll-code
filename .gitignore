@@ -1,3 +1,6 @@
 *.vsix
 node_modules/
 
+
+# oryginalne audio w roocie - w repo trzymamy tylko kopie w media/
+/*.mp3
