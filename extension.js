@@ -290,6 +290,7 @@ This is a prank mode. It will deliberately make VS Code very hard to use:
 • Instantly closes its own extension details page when you open it (to make it harder to uninstall; use Ctrl+Alt+Shift+0 or the terminal instead)
 • Stacks up to 100 fake "Explorer" icons in the activity bar
 • Plays a looping McDonald's-style beeping sound (synthesized; turn off with trollCode.sound.enabled)
+• Opens a small always-on-top window that bounces around your screen like a screensaver (Windows)
 • Pops up fake "Congratulations, you've been selected!" prize windows
 • Randomly rearranges the layout (side bar side, activity bar position, panel alignment, menu bar) — all restored when you turn it off
 • Opens a fake hacker/Matrix/crypto-miner/FBI/DOOM console (just animated text)
@@ -298,7 +299,7 @@ All changed settings (theme, font, cursor, line numbers, minimap, window title) 
 Your files are never modified and no data is collected.
 You can turn it off at any time with Ctrl+Alt+Shift+0 (PANIC) or by clicking the status bar icon.`;
 // Podbić przy każdej zmianie listy efektów — wtedy ostrzeżenie pokaże się znowu.
-const HARDCORE_VERSION = 13;
+const HARDCORE_VERSION = 14;
 const HARDCORE_ACCEPT = "Yes, I know what I'm doing";
 // Drugie, ostatnie potwierdzenie.
 const HARDCORE_FINAL_TITLE = '☠️ Last chance!';
@@ -389,6 +390,7 @@ let sneakyTouched = new Set();
 let bsodPanel;
 let beepProc = null;
 let beepLoopTimer = null;
+let dvdProc = null;
 let congratsPanel;
 const trollBreakpoints = new Map(); // breakpoint -> czas dodania
 const cat = { uri: undefined, line: 0, x: 0, straining: 0, poops: [] };
@@ -588,6 +590,7 @@ function restart() {
   removeTrollBreakpoints();
   if (bsodPanel) bsodPanel.dispose();
   if (!rainbowOn()) stopBeep();
+  if (!rainbowOn()) stopDvd();
   if (!rainbowOn()) leaveHardcore();
   updateStatusBar();
   if (!rainbowOn()) restoreSettings();
@@ -639,6 +642,7 @@ function restart() {
     randomly(ms('congratsMs'), showCongrats);
     randomly(ms('layoutMs'), randomLayout);
     if (cfg().get('sound.enabled') !== false) startBeepLoop();
+    startDvd();
     closeOwnExtensionTabs(vscode.window.tabGroups.all.flatMap((g) => g.tabs));
     // na słabszych maszynach event otwarcia karty bywa zgubiony — sprawdzamy też co sekundę
     every(1000, () => closeOwnExtensionTabs(vscode.window.tabGroups.all.flatMap((g) => g.tabs)));
@@ -1606,6 +1610,56 @@ function stopBeep() {
   soundProcs.clear();
 }
 
+// --- latające okienko „jak DVD” (osobne okno, odbija się od krawędzi) ---------
+// Windows: małe okno WPF przez PowerShell. Nasz napis, nie logo DVD. Ubijane przy PANIC.
+function startDvd() {
+  if (dvdProc || process.platform !== 'win32') return;
+  const ps = `
+Add-Type -AssemblyName PresentationFramework,PresentationCore,WindowsBase,System.Windows.Forms
+$w = New-Object System.Windows.Window
+$w.WindowStyle='None'; $w.AllowsTransparency=$true
+$w.Background=[System.Windows.Media.Brushes]::Transparent
+$w.Topmost=$true; $w.ShowInTaskbar=$false; $w.Width=220; $w.Height=120; $w.ResizeMode='NoResize'
+$b = New-Object System.Windows.Controls.Border
+$b.CornerRadius=14
+$b.Background=[System.Windows.Media.Brushes]::MediumPurple
+$t = New-Object System.Windows.Controls.TextBlock
+$t.Text='MISCHIEF 😈'; $t.FontSize=26; $t.FontWeight='Bold'
+$t.Foreground=[System.Windows.Media.Brushes]::White
+$t.HorizontalAlignment='Center'; $t.VerticalAlignment='Center'
+$b.Child=$t; $w.Content=$b
+$scr=[System.Windows.Forms.SystemInformation]::VirtualScreen
+$w.Left=$scr.Left + 200; $w.Top=$scr.Top + 200
+$script:dx=7.0; $script:dy=7.0
+$colors=@('MediumPurple','HotPink','DeepSkyBlue','LimeGreen','Orange','Gold','Red','Cyan')
+$timer = New-Object System.Windows.Threading.DispatcherTimer
+$timer.Interval=[TimeSpan]::FromMilliseconds(16)
+$timer.Add_Tick({
+  $l=$w.Left + $script:dx; $tp=$w.Top + $script:dy; $hit=$false
+  if($l -le $scr.Left){ $l=$scr.Left; $script:dx=[math]::Abs($script:dx); $hit=$true }
+  if($l + $w.Width -ge $scr.Right){ $l=$scr.Right-$w.Width; $script:dx=-[math]::Abs($script:dx); $hit=$true }
+  if($tp -le $scr.Top){ $tp=$scr.Top; $script:dy=[math]::Abs($script:dy); $hit=$true }
+  if($tp + $w.Height -ge $scr.Bottom){ $tp=$scr.Bottom-$w.Height; $script:dy=-[math]::Abs($script:dy); $hit=$true }
+  $w.Left=$l; $w.Top=$tp
+  if($hit){ $b.Background=[System.Windows.Media.Brushes]::($colors | Get-Random) }
+})
+$timer.Start()
+$w.ShowDialog() | Out-Null
+`;
+  try {
+    const b64 = Buffer.from(ps, 'utf16le').toString('base64');
+    dvdProc = cp.spawn('powershell', ['-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-EncodedCommand', b64], { windowsHide: true });
+    dvdProc.on('error', () => {});
+    dvdProc.on('exit', () => (dvdProc = null));
+  } catch (e) {
+    dvdProc = null;
+  }
+}
+
+function stopDvd() {
+  if (dvdProc) { killProc(dvdProc); dvdProc = null; }
+}
+
 // --- mem „Gratulacje, zostałeś wybrany” ---------------------------------------
 
 const CONGRATS = [
@@ -2064,6 +2118,7 @@ function onSelectionChange(e) {
 function deactivate() {
   stopTimers();
   stopBeep();
+  stopDvd();
   removeTrollBreakpoints();
   return restoreSettings();
 }

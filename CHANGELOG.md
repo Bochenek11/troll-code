@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.20.0
+- Hardcore: małe okno „MISCHIEF 😈” lata po ekranie jak wygaszacz (odbija się od krawędzi, zmienia kolor). Windows. Znika przy wyjściu z Hardcore / PANIC.
+
+
 ## 1.19.1
 - Prawdziwy komunikat, gdy nie da się zmienić trybu: najczęściej to otwarty settings.json z niezapisanymi zmianami (VS Code blokuje wtedy zapis ustawień) — zamiast mylącego „zrestartuj VS Code”.
 
