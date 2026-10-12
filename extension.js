@@ -1762,7 +1762,7 @@ const DVD_LINES = [
   'Nie uciekniesz. Ono też nie.',
   'Hardcore mode: ON',
   'Złap mnie, jeśli potrafisz 🏃',
-  'PANIC: Ctrl+Alt+Shift+0',
+  'bzzzt… bzzzt… 📺',
 ];
 function showDvdPage() {
   const panel = vscode.window.createWebviewPanel(
@@ -1792,7 +1792,7 @@ function showDvdPage() {
   <div class="face">😈</div>
   <h1>MISCHIEF MODE</h1>
   <p id="line">${line}</p>
-  <div class="small">🛑 PANIC: Ctrl+Alt+Shift+0 &nbsp;•&nbsp; zamknij to okno: Ctrl+Shift+W</div>
+  <div class="small">zamknij to okno: Ctrl+Shift+W</div>
   <script nonce="${nonce}">
     const lines=${JSON.stringify(DVD_LINES)};
     const el=document.getElementById('line');
