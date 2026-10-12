@@ -445,23 +445,23 @@ function activate(context) {
       try {
         await switchMode();
       } catch (err) {
-        // zdarza się po aktualizacji bez pełnego restartu: nowe ustawienia nie są jeszcze zarejestrowane
         console.error('[Troll Code] switchMode:', err);
-        const choice = await vscode.window.showWarningMessage(
-          '🤡 Troll Code się zaktualizował. Zamknij i otwórz VS Code ponownie, żeby zmiana trybu zadziałała.',
-          'Przeładuj okno'
-        );
-        if (choice) vscode.commands.executeCommand('workbench.action.reloadWindow');
+        reportConfigError(err);
       }
     }),
 
     vscode.commands.registerCommand('trollCode.panic', async () => {
-      await cfg().update('rainbowMode.enabled', false, vscode.ConfigurationTarget.Global);
-      await cfg().update('enabled', false, vscode.ConfigurationTarget.Global);
-      vscode.window.showInformationMessage('🛑 Troll Code: wszystko wyłączone. Możesz oddychać.');
+      try {
+        await cfg().update('rainbowMode.enabled', false, vscode.ConfigurationTarget.Global);
+        await cfg().update('enabled', false, vscode.ConfigurationTarget.Global);
+        vscode.window.showInformationMessage('🛑 Troll Code: wszystko wyłączone. Możesz oddychać.');
+      } catch (err) {
+        reportConfigError(err);
+      }
     }),
 
     vscode.commands.registerCommand('trollCode.rainbowToggle', async () => {
+     try {
       if (rainbowOn()) {
         await cfg().update('rainbowMode.enabled', false, vscode.ConfigurationTarget.Global);
         vscode.window.showInformationMessage('🌈 Tryb tęczowy wyłączony.');
@@ -477,6 +477,9 @@ function activate(context) {
         await cfg().update('rainbowMode.enabled', true, vscode.ConfigurationTarget.Global);
       }
       vscode.window.showWarningMessage('🌈 TRYB TĘCZOWY HARDKOR WŁĄCZONY. Ratunek: Ctrl+Alt+Shift+0.');
+     } catch (err) {
+       reportConfigError(err);
+     }
     }),
 
     vscode.commands.registerCommand('trollCode.trollNow', () => {
@@ -658,6 +661,23 @@ function restart() {
 
   // Tryb Troll jest teraz „sneaky”: bez paska, bez powiadomień, bez otwierania kart.
   // Jedyny efekt to po cichu psuta składnia podczas pisania (patrz onUserTyped).
+}
+
+// Pokazuje prawdziwą przyczynę, gdy VS Code odrzuci zapis ustawień.
+function reportConfigError(err) {
+  const msg = (err && err.message) || String(err);
+  if (/unsaved changes/i.test(msg)) {
+    vscode.window.showWarningMessage(
+      '🤡 Masz otwarty plik settings.json z niezapisanymi zmianami — zapisz go (Ctrl+S) albo zamknij, a potem spróbuj zmienić tryb jeszcze raz.'
+    );
+  } else if (/not a registered configuration/i.test(msg)) {
+    vscode.window.showWarningMessage(
+      '🤡 Zamknij i otwórz VS Code ponownie (pełny restart), żeby zmiana trybu zadziałała.',
+      'Przeładuj okno'
+    ).then((c) => { if (c) vscode.commands.executeCommand('workbench.action.reloadWindow'); });
+  } else {
+    vscode.window.showWarningMessage('🤡 Nie udało się zmienić trybu: ' + msg);
+  }
 }
 
 async function switchMode() {

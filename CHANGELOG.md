@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.19.1
+- Prawdziwy komunikat, gdy nie da się zmienić trybu: najczęściej to otwarty settings.json z niezapisanymi zmianami (VS Code blokuje wtedy zapis ustawień) — zamiast mylącego „zrestartuj VS Code”.
+
 ## 1.19.0
 - Naprawione zamykanie karty ze szczegółami rozszerzenia — wykrywanie po aktualnej nazwie (po zmianie na „Mischievous” przestało działać). Dodatkowo sprawdzane co sekundę, więc łapie też na słabszych maszynach.
 - Hardcore odpala wszystkie efekty od razu na starcie (bez opóźnień 1,5–6 s).
