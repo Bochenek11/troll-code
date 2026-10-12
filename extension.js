@@ -114,6 +114,43 @@ const RAINBOW = {
   breakpointMax: 6,
   stackMs: 1000,
   codeFlickerMs: 4000,
+  workbenchMs: 5000,
+  invertMs: 3500,
+};
+
+// Losowe, nieniszczące komendy VS Code (split, zoom, przełączniki widoku).
+const WORKBENCH_ACTIONS = [
+  'workbench.action.splitEditor',
+  'workbench.action.splitEditorDown',
+  'workbench.action.moveEditorToNextGroup',
+  'workbench.action.zoomIn',
+  'workbench.action.zoomOut',
+  'editor.action.fontZoomIn',
+  'editor.action.fontZoomOut',
+  'workbench.action.toggleActivityBarVisibility',
+  'workbench.action.toggleStatusbarVisibility',
+  'workbench.action.increaseViewSize',
+  'workbench.action.decreaseViewSize',
+  'workbench.action.toggleEditorWidths',
+];
+
+// Negatyw: mocne nadpisanie kolorów, przełączane co jakiś czas (wraca po wyjściu).
+const INVERT_COLORS = {
+  'editor.background': '#ffffff',
+  'editor.foreground': '#000000',
+  'editorCursor.foreground': '#ff0000',
+  'editorLineNumber.foreground': '#000000',
+  'sideBar.background': '#000000',
+  'sideBar.foreground': '#ffffff',
+  'activityBar.background': '#ffffff',
+  'activityBar.foreground': '#000000',
+  'statusBar.background': '#000000',
+  'statusBar.foreground': '#ffffff',
+  'titleBar.activeBackground': '#000000',
+  'titleBar.activeForeground': '#ffffff',
+  'panel.background': '#ffffff',
+  'tab.activeBackground': '#000000',
+  'tab.activeForeground': '#ffffff',
 };
 
 // Znaki, które wyglądają jak oryginał, ale łamią składnię (homoglify).
@@ -253,6 +290,7 @@ const CHAOS_SETTINGS = [
   'editor.minimap.enabled', 'editor.cursorStyle', 'editor.cursorBlinking', 'window.title',
   'workbench.sideBar.location', 'workbench.activityBar.location',
   'workbench.panel.alignment', 'window.menuBarVisibility',
+  'workbench.colorCustomizations',
 ];
 
 // Losowy układ (opcje z menu „Customize Layout”). Ustawienia, więc wracają po wyłączeniu.
@@ -290,7 +328,8 @@ This is a prank mode. It will deliberately make VS Code very hard to use:
 • Instantly closes its own extension details page when you open it (to make it harder to uninstall; use Ctrl+Alt+Shift+0 or the terminal instead)
 • Stacks up to 100 fake "Explorer" icons in the activity bar
 • Plays a looping McDonald's-style beeping sound (synthesized; turn off with trollCode.sound.enabled)
-• Makes your VS Code window fly around the screen like an old DVD screensaver (Windows)
+• Opens a NEW VS Code window and flies it around the screen like a DVD screensaver (Windows)
+• Fires random VS Code commands (split editor, zoom in/out…) and flips the colors to a negative/inverted palette
 • Pops up fake "Congratulations, you've been selected!" prize windows
 • Randomly rearranges the layout (side bar side, activity bar position, panel alignment, menu bar) — all restored when you turn it off
 • Opens a fake hacker/Matrix/crypto-miner/FBI/DOOM console (just animated text)
@@ -299,7 +338,7 @@ All changed settings (theme, font, cursor, line numbers, minimap, window title) 
 Your files are never modified and no data is collected.
 You can turn it off at any time with Ctrl+Alt+Shift+0 (PANIC) or by clicking the status bar icon.`;
 // Podbić przy każdej zmianie listy efektów — wtedy ostrzeżenie pokaże się znowu.
-const HARDCORE_VERSION = 15;
+const HARDCORE_VERSION = 16;
 const HARDCORE_ACCEPT = "Yes, I know what I'm doing";
 // Drugie, ostatnie potwierdzenie.
 const HARDCORE_FINAL_TITLE = '☠️ Last chance!';
@@ -591,6 +630,7 @@ function restart() {
   if (bsodPanel) bsodPanel.dispose();
   if (!rainbowOn()) stopBeep();
   if (!rainbowOn()) stopDvd();
+  if (!rainbowOn()) resetHardcoreUi();
   if (!rainbowOn()) leaveHardcore();
   updateStatusBar();
   if (!rainbowOn()) restoreSettings();
@@ -641,6 +681,8 @@ function restart() {
     every(ms('stackMs'), stackExplorer);
     randomly(ms('congratsMs'), showCongrats);
     randomly(ms('layoutMs'), randomLayout);
+    randomly(ms('workbenchMs'), randomWorkbench);
+    every(ms('invertMs'), invertColors);
     if (cfg().get('sound.enabled') !== false) startBeepLoop();
     startDvd();
     closeOwnExtensionTabs(vscode.window.tabGroups.all.flatMap((g) => g.tabs));
@@ -987,6 +1029,18 @@ function randomTitle() {
 function randomLayout() {
   const opt = pick(LAYOUT_OPTIONS);
   chaosSet(opt.key, pick(opt.values));
+}
+
+// Losowa, nieniszcząca komenda VS Code (split, zoom, przełącznik widoku).
+function randomWorkbench() {
+  vscode.commands.executeCommand(pick(WORKBENCH_ACTIONS)).then(undefined, () => {});
+}
+
+// Negatyw kolorów: przełącza mocne nadpisanie palety i z powrotem. Wraca po wyjściu.
+let inverted = false;
+function invertColors() {
+  inverted = !inverted;
+  chaosSet('workbench.colorCustomizations', inverted ? INVERT_COLORS : {});
 }
 
 // --- nakładki w edytorze (plik się nie zmienia) -----------------------------
@@ -1610,40 +1664,52 @@ function stopBeep() {
   soundProcs.clear();
 }
 
-// --- okno VS Code lata po ekranie „jak DVD” -----------------------------------
-// Windows: ukryty PowerShell co ~30 ms przesuwa okno(a) VS Code, odbijając je od krawędzi.
-// Rozmiar zostaje bez zmian (tylko pozycja). Ubijane przy wyjściu z Hardcore / PANIC.
+// --- otwiera NOWE okno VS Code i lata nim po ekranie „jak DVD” -----------------
+// Windows: ukryty PowerShell zapamiętuje istniejące okna, otwiera nowe okno VS Code
+// i odbija tylko ten nowy od krawędzi ekranu. Twoje główne okno zostaje nietknięte.
+// Ubijane przy wyjściu z Hardcore / PANIC (nowe okno zostaje — zamknij je Ctrl+Shift+W).
 function startDvd() {
   if (dvdProc || process.platform !== 'win32') return;
   const ps = `
 Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-public class TCWin {
-  [DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr h,int x,int y,int w,int ht,bool r);
-  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
-  [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left,Top,Right,Bottom; }
+using System;using System.Collections.Generic;using System.Runtime.InteropServices;using System.Text;
+public class TCWin{
+ [DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr h,int x,int y,int w,int ht,bool r);
+ [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h,int c);
+ [DllImport("user32.dll")] public static extern bool EnumWindows(EnumProc cb, IntPtr l);
+ [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+ [DllImport("user32.dll")] public static extern int GetWindowText(IntPtr h, StringBuilder s, int n);
+ public delegate bool EnumProc(IntPtr h, IntPtr l);
+ [StructLayout(LayoutKind.Sequential)] public struct RECT{public int Left,Top,Right,Bottom;}
+ public static List<IntPtr> VS(){
+   var r=new List<IntPtr>();
+   EnumWindows((h,l)=>{ if(IsWindowVisible(h)){ var sb=new StringBuilder(300); GetWindowText(h,sb,300); if(sb.ToString().EndsWith("Visual Studio Code")) r.Add(h);} return true;}, IntPtr.Zero);
+   return r;
+ }
 }
 "@
 Add-Type -AssemblyName System.Windows.Forms
-$scr=[System.Windows.Forms.SystemInformation]::VirtualScreen
-$hs = Get-Process Code -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle } | Select-Object -Expand MainWindowHandle -Unique
-if(-not $hs){ exit }
-$wins=@()
-foreach($h in $hs){
-  $r = New-Object TCWin+RECT
-  [void][TCWin]::GetWindowRect($h,[ref]$r)
-  $wins += [pscustomobject]@{ H=$h; X=[double]$r.Left; Y=[double]$r.Top; W=($r.Right-$r.Left); Ht=($r.Bottom-$r.Top); DX=9.0; DY=7.0 }
+$exe=(Get-Process Code -ErrorAction SilentlyContinue | Where-Object Path | Select-Object -First 1 -Expand Path)
+if(-not $exe){ exit }
+$before=[TCWin]::VS()
+Start-Process $exe -ArgumentList '--new-window'
+$h=[IntPtr]::Zero;$n=0
+while($h -eq [IntPtr]::Zero -and $n -lt 150){
+  Start-Sleep -Milliseconds 100;$n++
+  foreach($x in [TCWin]::VS()){ if($before -notcontains $x){ $h=$x; break } }
 }
+if($h -eq [IntPtr]::Zero){ exit }
+[void][TCWin]::ShowWindow($h,9)
+$scr=[System.Windows.Forms.SystemInformation]::VirtualScreen
+$w=820;$ht=560
+$x=[double]($scr.Left+120);$y=[double]($scr.Top+120);$dx=12.0;$dy=9.0
 while($true){
-  foreach($o in $wins){
-    $o.X += $o.DX; $o.Y += $o.DY
-    if($o.X -le $scr.Left){ $o.X=$scr.Left; $o.DX=[math]::Abs($o.DX) }
-    if($o.X + $o.W -ge $scr.Right){ $o.X=$scr.Right-$o.W; $o.DX=-[math]::Abs($o.DX) }
-    if($o.Y -le $scr.Top){ $o.Y=$scr.Top; $o.DY=[math]::Abs($o.DY) }
-    if($o.Y + $o.Ht -ge $scr.Bottom){ $o.Y=$scr.Bottom-$o.Ht; $o.DY=-[math]::Abs($o.DY) }
-    [void][TCWin]::MoveWindow($o.H,[int]$o.X,[int]$o.Y,[int]$o.W,[int]$o.Ht,$true)
-  }
+  $x+=$dx;$y+=$dy
+  if($x -le $scr.Left){$x=$scr.Left;$dx=[math]::Abs($dx)}
+  if($x+$w -ge $scr.Right){$x=$scr.Right-$w;$dx=-[math]::Abs($dx)}
+  if($y -le $scr.Top){$y=$scr.Top;$dy=[math]::Abs($dy)}
+  if($y+$ht -ge $scr.Bottom){$y=$scr.Bottom-$ht;$dy=-[math]::Abs($dy)}
+  [void][TCWin]::MoveWindow($h,[int]$x,[int]$y,$w,$ht,$true)
   Start-Sleep -Milliseconds 30
 }
 `;
@@ -1659,6 +1725,15 @@ while($true){
 
 function stopDvd() {
   if (dvdProc) { killProc(dvdProc); dvdProc = null; }
+}
+
+// Po wyjściu z Hardcore: cofamy zoom interfejsu/czcionki (to komendy, nie ustawienia)
+// i kasujemy flagę negatywu. Same kolory wracają przez restoreSettings().
+function resetHardcoreUi() {
+  inverted = false;
+  vscode.commands.executeCommand('workbench.action.zoomReset').then(undefined, () => {});
+  vscode.commands.executeCommand('editor.action.fontZoomReset').then(undefined, () => {});
+  vscode.commands.executeCommand('workbench.action.evenEditorWidths').then(undefined, () => {});
 }
 
 // --- mem „Gratulacje, zostałeś wybrany” ---------------------------------------

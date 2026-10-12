@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.21.0
+- „DVD” otwiera teraz NOWE okno VS Code i nim lata (główne okno zostaje nietknięte). Windows. Nowe okno zostaje po wyjściu — zamknij Ctrl+Shift+W.
+- Hardcore: losowe komendy VS Code (split edytora, zoom interfejsu/czcionki, przełączniki pasków). Zoom wraca po wyjściu. Interwał: `trollCode.hardcore.workbenchMs`.
+- Hardcore: negatyw kolorów — co jakiś czas odwraca paletę i z powrotem (wraca po wyjściu). Interwał: `trollCode.hardcore.invertMs`.
+
 ## 1.20.1
 - „DVD” rusza teraz PRAWDZIWYM oknem VS Code — lata po ekranie i odbija się od krawędzi (zamiast osobnego okienka). Windows. Stop przy wyjściu z Hardcore / PANIC.
 
