@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.21.1
+- Naprawione „DVD”: nowe okno otwierane jest teraz przez VS Code (niezawodnie), a PowerShell bierze je z wierzchu i nim lata.
+- Zapobieżono lawinie okien: nowe okno rozpoznaje się jako „dziecko” i nie uruchamia żadnych efektów (wcześniej otwierałoby kolejne okna w nieskończoność).
+
 ## 1.21.0
 - „DVD” otwiera teraz NOWE okno VS Code i nim lata (główne okno zostaje nietknięte). Windows. Nowe okno zostaje po wyjściu — zamknij Ctrl+Shift+W.
 - Hardcore: losowe komendy VS Code (split edytora, zoom interfejsu/czcionki, przełączniki pasków). Zoom wraca po wyjściu. Interwał: `trollCode.hardcore.workbenchMs`.

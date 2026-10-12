@@ -394,6 +394,7 @@ let shaking = false;
 let confirming = false;
 const waifuPanels = new Set();
 let hardcoreSnapshot = null;   // karty otwarte w chwili włączenia Hardcore
+let isDvdChild = false;        // to okno otworzył efekt „DVD” — ma być tylko latającym oknem
 let priorityUntil = 0;         // do tego czasu BSOD/„Gratulacje” mają pierwszeństwo (brak migania kart)
 let rainbowDecorations = [];
 let rainbowOffset = 0;
@@ -463,6 +464,13 @@ function activate(context) {
   registerFakeFiles(context);
   cleanupLeftoverBreakpoints();
   loadSneaky();
+  // To okno zostało otwarte przez efekt „DVD” innego okna? Jeśli tak — jest tylko do latania,
+  // nie uruchamia żadnych efektów (inaczej otwierałoby kolejne okna w nieskończoność).
+  const token = context.globalState.get('dvdChildToken', 0);
+  if (token && Date.now() - token < 15000) {
+    isDvdChild = true;
+    context.globalState.update('dvdChildToken', 0);
+  }
   // jeśli VS Code zamknięto w trybie Troll z podmianami, a teraz Troll jest wyłączony — cofnij
   if (mode() !== 'troll' || !cfg().get('enabled')) safely(revertSneaky);
 
@@ -615,6 +623,8 @@ function stopTimers() {
 
 function restart() {
   stopTimers();
+  // okno-dziecko od „DVD” niczego nie uruchamia (żeby nie otwierać kolejnych okien)
+  if (isDvdChild) { if (statusItem) statusItem.hide(); return; }
   diagnostics.clear();
   clearRainbow();
   clearDecorations(clownDeco);
@@ -1670,35 +1680,26 @@ function stopBeep() {
 // Ubijane przy wyjściu z Hardcore / PANIC (nowe okno zostaje — zamknij je Ctrl+Shift+W).
 function startDvd() {
   if (dvdProc || process.platform !== 'win32') return;
+  // Nowe okno otwieramy z VS Code (niezawodnie); PowerShell bierze je z wierzchu i lata nim.
+  // Token: nowe okno rozpozna się jako „dziecko” i nie uruchomi żadnych efektów.
+  ctx.globalState.update('dvdChildToken', Date.now());
+  vscode.commands.executeCommand('workbench.action.newWindow').then(undefined, () => {});
   const ps = `
 Add-Type @"
-using System;using System.Collections.Generic;using System.Runtime.InteropServices;using System.Text;
+using System;using System.Runtime.InteropServices;using System.Text;
 public class TCWin{
  [DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr h,int x,int y,int w,int ht,bool r);
  [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h,int c);
- [DllImport("user32.dll")] public static extern bool EnumWindows(EnumProc cb, IntPtr l);
- [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
+ [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
  [DllImport("user32.dll")] public static extern int GetWindowText(IntPtr h, StringBuilder s, int n);
- public delegate bool EnumProc(IntPtr h, IntPtr l);
- [StructLayout(LayoutKind.Sequential)] public struct RECT{public int Left,Top,Right,Bottom;}
- public static List<IntPtr> VS(){
-   var r=new List<IntPtr>();
-   EnumWindows((h,l)=>{ if(IsWindowVisible(h)){ var sb=new StringBuilder(300); GetWindowText(h,sb,300); if(sb.ToString().EndsWith("Visual Studio Code")) r.Add(h);} return true;}, IntPtr.Zero);
-   return r;
- }
 }
 "@
 Add-Type -AssemblyName System.Windows.Forms
-$exe=(Get-Process Code -ErrorAction SilentlyContinue | Where-Object Path | Select-Object -First 1 -Expand Path)
-if(-not $exe){ exit }
-$before=[TCWin]::VS()
-Start-Process $exe -ArgumentList '--new-window'
-$h=[IntPtr]::Zero;$n=0
-while($h -eq [IntPtr]::Zero -and $n -lt 150){
-  Start-Sleep -Milliseconds 100;$n++
-  foreach($x in [TCWin]::VS()){ if($before -notcontains $x){ $h=$x; break } }
-}
-if($h -eq [IntPtr]::Zero){ exit }
+Start-Sleep -Milliseconds 1200
+$h=[TCWin]::GetForegroundWindow()
+$sb=New-Object System.Text.StringBuilder 300
+[void][TCWin]::GetWindowText($h,$sb,300)
+if(-not $sb.ToString().EndsWith("Visual Studio Code")){ exit }
 [void][TCWin]::ShowWindow($h,9)
 $scr=[System.Windows.Forms.SystemInformation]::VirtualScreen
 $w=820;$ht=560
