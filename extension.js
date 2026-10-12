@@ -1693,6 +1693,7 @@ public class TCWin{
  [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h,int c);
  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
  [DllImport("user32.dll")] public static extern int GetWindowText(IntPtr h, StringBuilder s, int n);
+ [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr after, int x,int y,int cx,int cy, uint flags);
 }
 "@
 Add-Type -AssemblyName System.Windows.Forms
@@ -1707,6 +1708,8 @@ while($h -eq [IntPtr]::Zero -and $n -lt 50){
 }
 if($h -eq [IntPtr]::Zero){ exit }
 [void][TCWin]::ShowWindow($h,9)
+# zawsze na wierzchu (HWND_TOPMOST=-1, SWP_NOMOVE|SWP_NOSIZE=0x0003)
+[void][TCWin]::SetWindowPos($h,[IntPtr](-1),0,0,0,0,0x0003)
 $scr=[System.Windows.Forms.SystemInformation]::VirtualScreen
 $w=820;$ht=560
 $x=[double]($scr.Left+120);$y=[double]($scr.Top+120);$dx=12.0;$dy=9.0
@@ -1716,7 +1719,8 @@ while($true){
   if($x+$w -ge $scr.Right){$x=$scr.Right-$w;$dx=-[math]::Abs($dx)}
   if($y -le $scr.Top){$y=$scr.Top;$dy=[math]::Abs($dy)}
   if($y+$ht -ge $scr.Bottom){$y=$scr.Bottom-$ht;$dy=-[math]::Abs($dy)}
-  [void][TCWin]::MoveWindow($h,[int]$x,[int]$y,$w,$ht,$true)
+  # ruch + utrzymanie topmost (HWND_TOPMOST=-1, SWP_SHOWWINDOW=0x0040)
+  [void][TCWin]::SetWindowPos($h,[IntPtr](-1),[int]$x,[int]$y,$w,$ht,0x0040)
   Start-Sleep -Milliseconds 30
 }
 `;

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.21.3
+- Latające okno „DVD” jest teraz zawsze na wierzchu (topmost) — trzyma się nad innymi oknami przy każdym ruchu.
+
+
 ## 1.21.2
 - „DVD”: token „dziecka” zapisywany przed otwarciem okna (nowe okno nie odpala już wtyczki), a mover czeka, aż nowe okno VS Code będzie na wierzchu, i dopiero wtedy nim lata.
 
