@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.19.0
+- Naprawione zamykanie karty ze szczegółami rozszerzenia — wykrywanie po aktualnej nazwie (po zmianie na „Mischievous” przestało działać). Dodatkowo sprawdzane co sekundę, więc łapie też na słabszych maszynach.
+- Hardcore odpala wszystkie efekty od razu na starcie (bez opóźnień 1,5–6 s).
+- Zmieniony skrót PANIC: **Ctrl+Alt+Shift+0** (było Ctrl+Alt+Shift+P).
+
 ## 1.18.2
 - Nazwa wyświetlana zmieniona na „Mischievous” (poprzednia była zajęta na Marketplace).
 

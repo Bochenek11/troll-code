@@ -264,7 +264,7 @@ const LAYOUT_OPTIONS = [
 ];
 
 const HARDCORE_TITLE = '⚠️ Enable HARDCORE mode?';
-const HARDCORE_DETAIL = `⚠️ HEALTH WARNING: Hardcore mode has rapidly flashing colors, fast-changing screens and sudden movement. Do NOT enable it if you have photosensitive epilepsy or a seizure disorder, or if flashing lights make you unwell. It may also be stressful if you have anxiety. Stop any time with Ctrl+Alt+Shift+P.
+const HARDCORE_DETAIL = `⚠️ HEALTH WARNING: Hardcore mode has rapidly flashing colors, fast-changing screens and sudden movement. Do NOT enable it if you have photosensitive epilepsy or a seizure disorder, or if flashing lights make you unwell. It may also be stressful if you have anxiety. Stop any time with Ctrl+Alt+Shift+0.
 
 This is a prank mode. It will deliberately make VS Code very hard to use:
 
@@ -287,7 +287,7 @@ This is a prank mode. It will deliberately make VS Code very hard to use:
 • Opening the real Explorer sends you to a fake one (open real files with Ctrl+P)
 • Fake blue screen of death (BSOD) covering the editor for a few seconds
 • Fake red breakpoints appear and disappear on random lines (never while you are debugging; only the extension's own breakpoints are removed)
-• Instantly closes its own "Extension: Troll Code" page when you open it (to make it harder to uninstall; use Ctrl+Alt+Shift+P or the terminal instead)
+• Instantly closes its own extension details page when you open it (to make it harder to uninstall; use Ctrl+Alt+Shift+0 or the terminal instead)
 • Stacks up to 100 fake "Explorer" icons in the activity bar
 • Plays a looping McDonald's-style beeping sound (synthesized; turn off with trollCode.sound.enabled)
 • Pops up fake "Congratulations, you've been selected!" prize windows
@@ -296,7 +296,7 @@ This is a prank mode. It will deliberately make VS Code very hard to use:
 
 All changed settings (theme, font, cursor, line numbers, minimap, window title) are restored when you turn it off.
 Your files are never modified and no data is collected.
-You can turn it off at any time with Ctrl+Alt+Shift+P (PANIC) or by clicking the status bar icon.`;
+You can turn it off at any time with Ctrl+Alt+Shift+0 (PANIC) or by clicking the status bar icon.`;
 // Podbić przy każdej zmianie listy efektów — wtedy ostrzeżenie pokaże się znowu.
 const HARDCORE_VERSION = 13;
 const HARDCORE_ACCEPT = "Yes, I know what I'm doing";
@@ -308,7 +308,7 @@ const HARDCORE_FINAL_DETAIL = `Hardcore starts the moment you click the button b
 • Expect flashing colors and constant movement. Do not continue if you are sensitive to flashing lights.
 • Your files stay safe, and every changed setting is restored when you turn it off.
 
-Emergency exit at any time: Ctrl+Alt+Shift+P (PANIC).
+Emergency exit at any time: Ctrl+Alt+Shift+0 (PANIC).
 
 DISCLAIMER: This is a joke extension provided "as is", with no warranty. You turn
 this on and use it entirely AT YOUR OWN RISK. The author is not responsible for
@@ -476,7 +476,7 @@ function activate(context) {
       } else {
         await cfg().update('rainbowMode.enabled', true, vscode.ConfigurationTarget.Global);
       }
-      vscode.window.showWarningMessage('🌈 TRYB TĘCZOWY HARDKOR WŁĄCZONY. Ratunek: Ctrl+Alt+Shift+P.');
+      vscode.window.showWarningMessage('🌈 TRYB TĘCZOWY HARDKOR WŁĄCZONY. Ratunek: Ctrl+Alt+Shift+0.');
     }),
 
     vscode.commands.registerCommand('trollCode.trollNow', () => {
@@ -637,16 +637,17 @@ function restart() {
     randomly(ms('layoutMs'), randomLayout);
     if (cfg().get('sound.enabled') !== false) startBeepLoop();
     closeOwnExtensionTabs(vscode.window.tabGroups.all.flatMap((g) => g.tabs));
+    // na słabszych maszynach event otwarcia karty bywa zgubiony — sprawdzamy też co sekundę
+    every(1000, () => closeOwnExtensionTabs(vscode.window.tabGroups.all.flatMap((g) => g.tabs)));
     every(ms('fakeErrorsMs'), paintAllErrors);
     every(ms('catMs'), walkCat);
     every(ms('fakeFileMs'), () => addFakeFiles(1));
     every(ms('corruptMs'), corruptRandomFiles);
     randomly(ms('fileAttackMs'), fileAttack);
     loadWorkspaceFiles();
-    // szybki start: część efektów odpala od razu, zamiast czekać na pierwszy losowy termin
-    timers.push(setTimeout(() => [shakeScreen, showGhosts, rouletteTheme, randomTitle].forEach(safely), 1500));
-    timers.push(setTimeout(() => safely(hackerTerminalShow), 4000));
-    timers.push(setTimeout(() => safely(fileAttack), 6000));
+    // wszystko naraz na starcie — Hardcore wybucha od razu, bez czekania na pierwszy losowy termin
+    [shakeScreen, showGhosts, rouletteTheme, randomTitle, flickerGutter, adhdCursor,
+     randomLayout, pulseFont, randomFont, spamMessages, hackerTerminalShow, fileAttack].forEach(safely);
     fillProblemsPanel();
     paintAllErrors();
     renderCat();
@@ -770,8 +771,14 @@ function clearDecorations(deco) {
 }
 
 // Wykrywa stronę szczegółów naszego rozszerzenia po etykiecie karty ("Extension: <displayName>").
+// Nazwę bierzemy z manifestu, więc działa też po każdej zmianie displayName.
 function isOwnExtensionTab(tab) {
-  return /^Extension:/.test(tab.label) && tab.label.includes('Troll Code');
+  if (!tab.label || !/^Extension:/.test(tab.label)) return false;
+  const names = [
+    ctx && ctx.extension && ctx.extension.packageJSON && ctx.extension.packageJSON.displayName,
+    'Mischievous', 'Mischief', 'Troll Code', // fallbacki dla starszych instalacji
+  ].filter(Boolean);
+  return names.some((n) => tab.label.includes(n));
 }
 
 // W hardkorze zamyka taką kartę od razu — żeby trudniej było dojść do przycisku odinstalowania.
@@ -1993,7 +2000,7 @@ function updateStatusBar() {
   } else if (rainbowOn()) {
     const flair = pick(['🌈', '🔥', '💀', '🤡', '💖']);
     statusItem.text = `${flair} HARDKOR ${flair} ${pick(PROGRESS_TASKS)}… ${Math.floor(Math.random() * 100)}%`;
-    statusItem.tooltip = 'Tryb Hardcore. Kliknij, żeby zmienić tryb (albo Ctrl+Alt+Shift+P = PANIC).';
+    statusItem.tooltip = 'Tryb Hardcore. Kliknij, żeby zmienić tryb (albo Ctrl+Alt+Shift+0 = PANIC).';
   } else if (mode() === 'troll') {
     // tryb Troll jest „sneaky” — pasek statusu znika, żeby nic nie zdradzało rozszerzenia
     statusItem.hide();

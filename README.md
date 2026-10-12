@@ -6,11 +6,11 @@ Troll Code turns VS Code into a prankster. It comments on your code, fakes progr
 
 Pick how much chaos you can handle: from a friendly **Legit** mode you can keep on all day, to **Hardcore** mode, which is pure chaos and only starts after you confirm **two separate warnings**.
 
-> 🛡️ **Legit and Hardcore never edit your files** — every effect there is visual or temporary. **Troll mode is the exception**: it silently alters text as you type (reversible with Ctrl+Z; saved to disk only when you save). Everything can be switched off in one keystroke: **Ctrl+Alt+Shift+P**.
+> 🛡️ **Legit and Hardcore never edit your files** — every effect there is visual or temporary. **Troll mode is the exception**: it silently alters text as you type (reversible with Ctrl+Z; saved to disk only when you save). Everything can be switched off in one keystroke: **Ctrl+Alt+Shift+0**.
 
 > 🇵🇱 The jokes and messages inside the editor are in **Polish**.
 
-> 🚨 **HEALTH / EPILEPSY WARNING.** **Hardcore mode** contains **rapidly flashing colors, fast-changing screens and constant movement**. **Do not use Hardcore mode if you have photosensitive epilepsy or any seizure disorder, or if flashing lights make you unwell.** It may also be stressful for people with anxiety. You must accept this warning before Hardcore starts, and you can stop everything instantly with **Ctrl+Alt+Shift+P**. Legit and Troll mode do not flash.
+> 🚨 **HEALTH / EPILEPSY WARNING.** **Hardcore mode** contains **rapidly flashing colors, fast-changing screens and constant movement**. **Do not use Hardcore mode if you have photosensitive epilepsy or any seizure disorder, or if flashing lights make you unwell.** It may also be stressful for people with anxiety. You must accept this warning before Hardcore starts, and you can stop everything instantly with **Ctrl+Alt+Shift+0**. Legit and Troll mode do not flash.
 
 > ⚖️ **Disclaimer — use at your own risk.** This is a joke extension provided **"as is", with no warranty of any kind** (see [LICENSE](LICENSE)). You install and enable it, including Troll and Hardcore mode, **entirely at your own risk**. The author is **not responsible** for any lost work, broken builds, misconfigured settings, or anything else that happens while it is enabled. Both Troll and Hardcore mode require you to accept an "at your own risk" warning before they start. If you don't accept that, don't enable them.
 
@@ -89,7 +89,7 @@ Lists **every effect** Hardcore will do, says that your files are never modified
 → Click **"Yes, I know what I'm doing"** to continue.
 
 **2️⃣ Second window: "☠️ Last chance!"**
-A final reminder: save your work first, expect flashing colors and constant movement, and use **Ctrl+Alt+Shift+P** to escape at any time.
+A final reminder: save your work first, expect flashing colors and constant movement, and use **Ctrl+Alt+Shift+0** to escape at any time.
 → Click **"☠️ Start HARDCORE"** to begin.
 
 Closing either window or clicking **Cancel** means **nothing happens**. You stay in your current mode.
@@ -121,7 +121,7 @@ You will see both windows again:
 
 | Feature | What it does |
 |---|---|
-| 🛑 **Panic button** | **Ctrl+Alt+Shift+P** (Mac: **Cmd+Alt+Shift+P**) turns off *everything* immediately and restores your settings |
+| 🛑 **Panic button** | **Ctrl+Alt+Shift+0** (Mac: **Cmd+Alt+Shift+0**) turns off *everything* immediately and restores your settings |
 | 😇 **Safe default** | Legit Mode is the default. Troll and Hardcore must be chosen on purpose |
 | ✋ **Two Hardcore warnings** | First a window listing every effect (**"Yes, I know what I'm doing"**), then a final "Last chance!" window (**"☠️ Start HARDCORE"**). Cancel either one and nothing starts |
 | 🔁 **Warnings come back** | Turning Hardcore off resets your consent. An update with new effects asks again too |
@@ -172,7 +172,7 @@ No. Fake breakpoints are only added when **no debug session is running**, so the
 No. It's an editor tab that looks like a Windows BSOD. Nothing crashes and nothing restarts. It closes on its own after ~12 seconds, or you can close it like any tab.
 
 **Where does the beeping sound come from?**
-From an audio file bundled with the extension. It is played **through your operating system's audio player** (on Windows via a hidden PowerShell `MediaPlayer`; `afplay` on macOS; `paplay`/`ffplay` on Linux), not streamed or downloaded. This is done so it plays without you having to click a tab (VS Code's webview blocks autoplay until you interact with it). It only plays in Hardcore mode, you can turn it off with `trollCode.sound.enabled`, and **Ctrl+Alt+Shift+P stops it instantly**. Each playback is a short background process that ends on its own, so if VS Code closes or crashes the sound stops by itself. The fake prize pop-up plays its own bundled sound the same way.
+From an audio file bundled with the extension. It is played **through your operating system's audio player** (on Windows via a hidden PowerShell `MediaPlayer`; `afplay` on macOS; `paplay`/`ffplay` on Linux), not streamed or downloaded. This is done so it plays without you having to click a tab (VS Code's webview blocks autoplay until you interact with it). It only plays in Hardcore mode, you can turn it off with `trollCode.sound.enabled`, and **Ctrl+Alt+Shift+0 stops it instantly**. Each playback is a short background process that ends on its own, so if VS Code closes or crashes the sound stops by itself. The fake prize pop-up plays its own bundled sound the same way.
 
 **Are the "Congratulations, you've been selected" windows real? Do they collect anything?**
 No. They are static webview tabs with a joke message and a button that runs away from your cursor. They have **no form, no input and no link** — nothing is submitted, nothing is collected, and the button does nothing. The panel even says it's a joke. Close it like any tab, or press PANIC.
@@ -186,7 +186,7 @@ Press **Ctrl+P** (Mac: **Cmd+P**) and type a file name. Quick Open always shows 
 Want the fake Explorer to be the *only* one? Right-click the activity bar and untick the real **Explorer**. VS Code doesn't let extensions do this for you. Remember to tick it again afterwards: Troll Code can't restore it.
 
 **How do I stop it right now?**
-Press **Ctrl+Alt+Shift+P** (Mac: **Cmd+Alt+Shift+P**). Everything stops at once and your settings come back. You can also click the icon in the status bar and choose **⏸️ Wyłączony** (Off).
+Press **Ctrl+Alt+Shift+0** (Mac: **Cmd+Alt+Shift+0**). Everything stops at once and your settings come back. You can also click the icon in the status bar and choose **⏸️ Wyłączony** (Off).
 
 **How do I remove it completely?**
 Press PANIC first, then uninstall from the Extensions view, or from a terminal:
@@ -225,7 +225,7 @@ code --install-extension troll-code-<version>.vsix
 2. Look at the bottom-right of the status bar: 😇 means Legit.
 3. Click it to switch to 🤡 **Troll** or ☠️ **Hardcore**.
 4. Want a joke right now? Run **Troll Code: Trolluj mnie teraz**.
-5. Had enough? Press **Ctrl+Alt+Shift+P**.
+5. Had enough? Press **Ctrl+Alt+Shift+0**.
 
 ---
 
@@ -235,7 +235,7 @@ Open the Command Palette (**Ctrl+Shift+P** / **Cmd+Shift+P**) and type `Troll Co
 
 | Command | What it does | Shortcut |
 |---|---|---|
-| 🛑 **PANIC — wyłącz wszystko** | Turns off everything and restores your settings | **Ctrl+Alt+Shift+P** |
+| 🛑 **PANIC — wyłącz wszystko** | Turns off everything and restores your settings | **Ctrl+Alt+Shift+0** |
 | **Wybierz tryb (Legit / Troll / Hardcore)** | Opens the mode picker | Click the status bar icon |
 | **Włącz/wyłącz trolling** | Turns all effects on or off | – |
 | **🌈 Tryb tęczowy HARDKOR (włącz/wyłącz)** | Turns Hardcore on (with warning) or off | – |
@@ -374,10 +374,10 @@ If a value is missing or invalid, the default above is used.
 - The cat is positioned with a CSS trick that VS Code doesn't officially support, so it may look off in some setups. The poop counter in the status bar still works.
 
 ### VS Code feels slow in Hardcore
-- Hardcore writes to your user settings several times per second (theme, font, cursor…). That is part of the chaos. On slower machines, press **Ctrl+Alt+Shift+P** to stop it.
+- Hardcore writes to your user settings several times per second (theme, font, cursor…). That is part of the chaos. On slower machines, press **Ctrl+Alt+Shift+0** to stop it.
 
 ### I can't reach the Extensions view to uninstall
-- Press **Ctrl+Alt+Shift+P** first, or uninstall from a terminal:
+- Press **Ctrl+Alt+Shift+0** first, or uninstall from a terminal:
   ```bash
   code --uninstall-extension bochenek11.troll-code
   ```
