@@ -64,7 +64,7 @@ Everything from Troll Mode, turned up, **plus**:
 - 👻 **Ghost comments** like `// TODO: zmień zawód` ("change careers") appear and fade
 - 💀 **Fake hacker terminal**: five random themes — Hacker, Matrix, Crypto Miner, FBI and DOOM — each with its own colors and lines. Pure animated text, runs nothing
 - 🧱 **Explorer stack**: up to 100 fake "Explorer" icons pile up in the activity bar (they disappear when you leave Hardcore)
-- 📺 **Bouncing window**: a small always-on-top window ("MISCHIEF 😈") flies around your screen like an old screensaver, changing color when it hits an edge (Windows only). It closes when you leave Hardcore or press panic
+- 📺 **Bouncing window**: your whole VS Code window flies around the screen and bounces off the edges like an old DVD screensaver (Windows only). It stops when you leave Hardcore or press panic
 - 🔊 **Beeping**: a looping McDonald's fryer sound plays in the background (bundled audio file, played through the OS so it needs no clicking; turn it off with `trollCode.sound.enabled`)
 - 🎉 **Fake prize pop-ups**: *"Congratulations, you've been selected as the 1,000,000th programmer!"* windows with a sound and a button that runs away from your cursor
 - 🔀 **Layout roulette**: every few seconds one layout option changes on its own — side bar moves left/right, activity bar jumps to the top/bottom/hides, panel re-aligns, menu bar changes. All of it is restored when you leave Hardcore

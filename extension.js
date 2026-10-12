@@ -290,7 +290,7 @@ This is a prank mode. It will deliberately make VS Code very hard to use:
 • Instantly closes its own extension details page when you open it (to make it harder to uninstall; use Ctrl+Alt+Shift+0 or the terminal instead)
 • Stacks up to 100 fake "Explorer" icons in the activity bar
 • Plays a looping McDonald's-style beeping sound (synthesized; turn off with trollCode.sound.enabled)
-• Opens a small always-on-top window that bounces around your screen like a screensaver (Windows)
+• Makes your VS Code window fly around the screen like an old DVD screensaver (Windows)
 • Pops up fake "Congratulations, you've been selected!" prize windows
 • Randomly rearranges the layout (side bar side, activity bar position, panel alignment, menu bar) — all restored when you turn it off
 • Opens a fake hacker/Matrix/crypto-miner/FBI/DOOM console (just animated text)
@@ -299,7 +299,7 @@ All changed settings (theme, font, cursor, line numbers, minimap, window title) 
 Your files are never modified and no data is collected.
 You can turn it off at any time with Ctrl+Alt+Shift+0 (PANIC) or by clicking the status bar icon.`;
 // Podbić przy każdej zmianie listy efektów — wtedy ostrzeżenie pokaże się znowu.
-const HARDCORE_VERSION = 14;
+const HARDCORE_VERSION = 15;
 const HARDCORE_ACCEPT = "Yes, I know what I'm doing";
 // Drugie, ostatnie potwierdzenie.
 const HARDCORE_FINAL_TITLE = '☠️ Last chance!';
@@ -1610,41 +1610,42 @@ function stopBeep() {
   soundProcs.clear();
 }
 
-// --- latające okienko „jak DVD” (osobne okno, odbija się od krawędzi) ---------
-// Windows: małe okno WPF przez PowerShell. Nasz napis, nie logo DVD. Ubijane przy PANIC.
+// --- okno VS Code lata po ekranie „jak DVD” -----------------------------------
+// Windows: ukryty PowerShell co ~30 ms przesuwa okno(a) VS Code, odbijając je od krawędzi.
+// Rozmiar zostaje bez zmian (tylko pozycja). Ubijane przy wyjściu z Hardcore / PANIC.
 function startDvd() {
   if (dvdProc || process.platform !== 'win32') return;
   const ps = `
-Add-Type -AssemblyName PresentationFramework,PresentationCore,WindowsBase,System.Windows.Forms
-$w = New-Object System.Windows.Window
-$w.WindowStyle='None'; $w.AllowsTransparency=$true
-$w.Background=[System.Windows.Media.Brushes]::Transparent
-$w.Topmost=$true; $w.ShowInTaskbar=$false; $w.Width=220; $w.Height=120; $w.ResizeMode='NoResize'
-$b = New-Object System.Windows.Controls.Border
-$b.CornerRadius=14
-$b.Background=[System.Windows.Media.Brushes]::MediumPurple
-$t = New-Object System.Windows.Controls.TextBlock
-$t.Text='MISCHIEF 😈'; $t.FontSize=26; $t.FontWeight='Bold'
-$t.Foreground=[System.Windows.Media.Brushes]::White
-$t.HorizontalAlignment='Center'; $t.VerticalAlignment='Center'
-$b.Child=$t; $w.Content=$b
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public class TCWin {
+  [DllImport("user32.dll")] public static extern bool MoveWindow(IntPtr h,int x,int y,int w,int ht,bool r);
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+  [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left,Top,Right,Bottom; }
+}
+"@
+Add-Type -AssemblyName System.Windows.Forms
 $scr=[System.Windows.Forms.SystemInformation]::VirtualScreen
-$w.Left=$scr.Left + 200; $w.Top=$scr.Top + 200
-$script:dx=7.0; $script:dy=7.0
-$colors=@('MediumPurple','HotPink','DeepSkyBlue','LimeGreen','Orange','Gold','Red','Cyan')
-$timer = New-Object System.Windows.Threading.DispatcherTimer
-$timer.Interval=[TimeSpan]::FromMilliseconds(16)
-$timer.Add_Tick({
-  $l=$w.Left + $script:dx; $tp=$w.Top + $script:dy; $hit=$false
-  if($l -le $scr.Left){ $l=$scr.Left; $script:dx=[math]::Abs($script:dx); $hit=$true }
-  if($l + $w.Width -ge $scr.Right){ $l=$scr.Right-$w.Width; $script:dx=-[math]::Abs($script:dx); $hit=$true }
-  if($tp -le $scr.Top){ $tp=$scr.Top; $script:dy=[math]::Abs($script:dy); $hit=$true }
-  if($tp + $w.Height -ge $scr.Bottom){ $tp=$scr.Bottom-$w.Height; $script:dy=-[math]::Abs($script:dy); $hit=$true }
-  $w.Left=$l; $w.Top=$tp
-  if($hit){ $b.Background=[System.Windows.Media.Brushes]::($colors | Get-Random) }
-})
-$timer.Start()
-$w.ShowDialog() | Out-Null
+$hs = Get-Process Code -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle } | Select-Object -Expand MainWindowHandle -Unique
+if(-not $hs){ exit }
+$wins=@()
+foreach($h in $hs){
+  $r = New-Object TCWin+RECT
+  [void][TCWin]::GetWindowRect($h,[ref]$r)
+  $wins += [pscustomobject]@{ H=$h; X=[double]$r.Left; Y=[double]$r.Top; W=($r.Right-$r.Left); Ht=($r.Bottom-$r.Top); DX=9.0; DY=7.0 }
+}
+while($true){
+  foreach($o in $wins){
+    $o.X += $o.DX; $o.Y += $o.DY
+    if($o.X -le $scr.Left){ $o.X=$scr.Left; $o.DX=[math]::Abs($o.DX) }
+    if($o.X + $o.W -ge $scr.Right){ $o.X=$scr.Right-$o.W; $o.DX=-[math]::Abs($o.DX) }
+    if($o.Y -le $scr.Top){ $o.Y=$scr.Top; $o.DY=[math]::Abs($o.DY) }
+    if($o.Y + $o.Ht -ge $scr.Bottom){ $o.Y=$scr.Bottom-$o.Ht; $o.DY=-[math]::Abs($o.DY) }
+    [void][TCWin]::MoveWindow($o.H,[int]$o.X,[int]$o.Y,[int]$o.W,[int]$o.Ht,$true)
+  }
+  Start-Sleep -Milliseconds 30
+}
 `;
   try {
     const b64 = Buffer.from(ps, 'utf16le').toString('base64');

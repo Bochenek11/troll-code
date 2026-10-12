@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.20.1
+- „DVD” rusza teraz PRAWDZIWYM oknem VS Code — lata po ekranie i odbija się od krawędzi (zamiast osobnego okienka). Windows. Stop przy wyjściu z Hardcore / PANIC.
+
 ## 1.20.0
 - Hardcore: małe okno „MISCHIEF 😈” lata po ekranie jak wygaszacz (odbija się od krawędzi, zmienia kolor). Windows. Znika przy wyjściu z Hardcore / PANIC.
 
