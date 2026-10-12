@@ -118,7 +118,9 @@ const RAINBOW = {
   jiggleMs: 900,
 };
 
-// Losowe, nieniszczące komendy VS Code (split, zoom, przełączniki widoku).
+// Losowe komendy VS Code — tylko takie, które potrafimy cofnąć przy wyjściu
+// (zoom → zoomReset, split → editorLayoutSingle). Bez przełączników pasków itp.,
+// bo tych nie dało się jednoznacznie przywrócić.
 const WORKBENCH_ACTIONS = [
   'workbench.action.splitEditor',
   'workbench.action.splitEditorDown',
@@ -127,11 +129,6 @@ const WORKBENCH_ACTIONS = [
   'workbench.action.zoomOut',
   'editor.action.fontZoomIn',
   'editor.action.fontZoomOut',
-  'workbench.action.toggleActivityBarVisibility',
-  'workbench.action.toggleStatusbarVisibility',
-  'workbench.action.increaseViewSize',
-  'workbench.action.decreaseViewSize',
-  'workbench.action.toggleEditorWidths',
 ];
 
 
@@ -465,6 +462,16 @@ function activate(context) {
     if (!('workbench.colorTheme' in originals)) originals['workbench.colorTheme'] = legacyTheme;
     context.globalState.update('originals', originals);
     context.globalState.update('originalTheme', undefined);
+  }
+  // Migracja: starsza wersja miała „negatyw kolorów” i mogła zostawić przestawione kolory.
+  // Jeśli zapamiętaliśmy oryginał workbench.colorCustomizations — przywróć go i wyczyść wpis.
+  if ('workbench.colorCustomizations' in originals) {
+    const orig = originals['workbench.colorCustomizations'];
+    delete originals['workbench.colorCustomizations'];
+    context.globalState.update('originals', originals);
+    vscode.workspace.getConfiguration('workbench')
+      .update('colorCustomizations', orig === null ? undefined : orig, vscode.ConfigurationTarget.Global)
+      .then(undefined, () => {});
   }
 
   context.subscriptions.push(
@@ -1800,7 +1807,8 @@ function showDvdPage() {
 function resetHardcoreUi() {
   vscode.commands.executeCommand('workbench.action.zoomReset').then(undefined, () => {});
   vscode.commands.executeCommand('editor.action.fontZoomReset').then(undefined, () => {});
-  vscode.commands.executeCommand('workbench.action.evenEditorWidths').then(undefined, () => {});
+  // scala rozjechane grupy edytora z powrotem do jednej
+  vscode.commands.executeCommand('workbench.action.editorLayoutSingle').then(undefined, () => {});
 }
 
 // --- mem „Gratulacje, zostałeś wybrany” ---------------------------------------

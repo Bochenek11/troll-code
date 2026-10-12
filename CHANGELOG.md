@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.22.1
+- PANIC/wyjście z Hardcore przywraca więcej: losowe komendy ograniczone do odwracalnych (zoom, split), a splity są scalane z powrotem do jednej grupy. Usunięto przełączniki pasków, których nie dało się cofnąć.
+- Migracja: jeśli starsza wersja („negatyw kolorów”) zostawiła przestawione kolory, są przywracane przy starcie.
+
 ## 1.22.0
 - Latające okno „DVD” pokazuje teraz pełnoekranową stronę „MISCHIEF MODE 😈” z animacją i tekstami.
 - Usunięty efekt negatywu kolorów.
