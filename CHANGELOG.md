@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.22.0
+- Latające okno „DVD” pokazuje teraz pełnoekranową stronę „MISCHIEF MODE 😈” z animacją i tekstami.
+- Usunięty efekt negatywu kolorów.
+- Nowy mocny efekt: nawiedzony kursor — mysz sama ucieka co jakiś czas (Windows; klawiatura działa, więc PANIC działa). Interwał: `trollCode.hardcore.jiggleMs`.
+
 ## 1.21.3
 - Latające okno „DVD” jest teraz zawsze na wierzchu (topmost) — trzyma się nad innymi oknami przy każdym ruchu.
 

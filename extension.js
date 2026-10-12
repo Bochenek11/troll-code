@@ -115,7 +115,7 @@ const RAINBOW = {
   stackMs: 1000,
   codeFlickerMs: 4000,
   workbenchMs: 5000,
-  invertMs: 3500,
+  jiggleMs: 900,
 };
 
 // Losowe, nieniszczące komendy VS Code (split, zoom, przełączniki widoku).
@@ -134,24 +134,6 @@ const WORKBENCH_ACTIONS = [
   'workbench.action.toggleEditorWidths',
 ];
 
-// Negatyw: mocne nadpisanie kolorów, przełączane co jakiś czas (wraca po wyjściu).
-const INVERT_COLORS = {
-  'editor.background': '#ffffff',
-  'editor.foreground': '#000000',
-  'editorCursor.foreground': '#ff0000',
-  'editorLineNumber.foreground': '#000000',
-  'sideBar.background': '#000000',
-  'sideBar.foreground': '#ffffff',
-  'activityBar.background': '#ffffff',
-  'activityBar.foreground': '#000000',
-  'statusBar.background': '#000000',
-  'statusBar.foreground': '#ffffff',
-  'titleBar.activeBackground': '#000000',
-  'titleBar.activeForeground': '#ffffff',
-  'panel.background': '#ffffff',
-  'tab.activeBackground': '#000000',
-  'tab.activeForeground': '#ffffff',
-};
 
 // Znaki, które wyglądają jak oryginał, ale łamią składnię (homoglify).
 const SNEAKY_SWAPS = {
@@ -290,7 +272,6 @@ const CHAOS_SETTINGS = [
   'editor.minimap.enabled', 'editor.cursorStyle', 'editor.cursorBlinking', 'window.title',
   'workbench.sideBar.location', 'workbench.activityBar.location',
   'workbench.panel.alignment', 'window.menuBarVisibility',
-  'workbench.colorCustomizations',
 ];
 
 // Losowy układ (opcje z menu „Customize Layout”). Ustawienia, więc wracają po wyłączeniu.
@@ -329,7 +310,8 @@ This is a prank mode. It will deliberately make VS Code very hard to use:
 • Stacks up to 100 fake "Explorer" icons in the activity bar
 • Plays a looping McDonald's-style beeping sound (synthesized; turn off with trollCode.sound.enabled)
 • Opens a NEW VS Code window and flies it around the screen like a DVD screensaver (Windows)
-• Fires random VS Code commands (split editor, zoom in/out…) and flips the colors to a negative/inverted palette
+• Fires random VS Code commands (split editor, zoom in/out…)
+• Moves your mouse cursor on its own every so often (Windows; keyboard still works, so panic still works)
 • Pops up fake "Congratulations, you've been selected!" prize windows
 • Randomly rearranges the layout (side bar side, activity bar position, panel alignment, menu bar) — all restored when you turn it off
 • Opens a fake hacker/Matrix/crypto-miner/FBI/DOOM console (just animated text)
@@ -338,7 +320,7 @@ All changed settings (theme, font, cursor, line numbers, minimap, window title) 
 Your files are never modified and no data is collected.
 You can turn it off at any time with Ctrl+Alt+Shift+0 (PANIC) or by clicking the status bar icon.`;
 // Podbić przy każdej zmianie listy efektów — wtedy ostrzeżenie pokaże się znowu.
-const HARDCORE_VERSION = 16;
+const HARDCORE_VERSION = 17;
 const HARDCORE_ACCEPT = "Yes, I know what I'm doing";
 // Drugie, ostatnie potwierdzenie.
 const HARDCORE_FINAL_TITLE = '☠️ Last chance!';
@@ -431,6 +413,7 @@ let bsodPanel;
 let beepProc = null;
 let beepLoopTimer = null;
 let dvdProc = null;
+let jiggleProc = null;
 let congratsPanel;
 const trollBreakpoints = new Map(); // breakpoint -> czas dodania
 const cat = { uri: undefined, line: 0, x: 0, straining: 0, poops: [] };
@@ -470,6 +453,7 @@ function activate(context) {
   if (token && Date.now() - token < 15000) {
     isDvdChild = true;
     context.globalState.update('dvdChildToken', 0);
+    setTimeout(() => safely(showDvdPage), 400);
   }
   // jeśli VS Code zamknięto w trybie Troll z podmianami, a teraz Troll jest wyłączony — cofnij
   if (mode() !== 'troll' || !cfg().get('enabled')) safely(revertSneaky);
@@ -640,6 +624,7 @@ function restart() {
   if (bsodPanel) bsodPanel.dispose();
   if (!rainbowOn()) stopBeep();
   if (!rainbowOn()) stopDvd();
+  if (!rainbowOn()) stopJiggle();
   if (!rainbowOn()) resetHardcoreUi();
   if (!rainbowOn()) leaveHardcore();
   updateStatusBar();
@@ -692,7 +677,7 @@ function restart() {
     randomly(ms('congratsMs'), showCongrats);
     randomly(ms('layoutMs'), randomLayout);
     randomly(ms('workbenchMs'), randomWorkbench);
-    every(ms('invertMs'), invertColors);
+    startJiggle();
     if (cfg().get('sound.enabled') !== false) startBeepLoop();
     startDvd();
     closeOwnExtensionTabs(vscode.window.tabGroups.all.flatMap((g) => g.tabs));
@@ -1046,12 +1031,6 @@ function randomWorkbench() {
   vscode.commands.executeCommand(pick(WORKBENCH_ACTIONS)).then(undefined, () => {});
 }
 
-// Negatyw kolorów: przełącza mocne nadpisanie palety i z powrotem. Wraca po wyjściu.
-let inverted = false;
-function invertColors() {
-  inverted = !inverted;
-  chaosSet('workbench.colorCustomizations', inverted ? INVERT_COLORS : {});
-}
 
 // --- nakładki w edytorze (plik się nie zmienia) -----------------------------
 
@@ -1738,10 +1717,87 @@ function stopDvd() {
   if (dvdProc) { killProc(dvdProc); dvdProc = null; }
 }
 
+// --- nawiedzony kursor: mysz sama ucieka --------------------------------------
+// Windows: ukryty PowerShell co jakiś czas przesuwa kursor o losowy skok.
+// Klawiatura działa dalej, więc PANIC (Ctrl+Alt+Shift+0) nadal zadziała.
+function startJiggle() {
+  if (jiggleProc || process.platform !== 'win32') return;
+  const gap = Math.max(100, ms('jiggleMs'));
+  const ps = `
+Add-Type -AssemblyName System.Windows.Forms,System.Drawing
+$r=New-Object System.Random
+while($true){
+  $p=[System.Windows.Forms.Cursor]::Position
+  $nx=$p.X + $r.Next(-140,140)
+  $ny=$p.Y + $r.Next(-140,140)
+  [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point($nx,$ny)
+  Start-Sleep -Milliseconds ${gap}
+}
+`;
+  try {
+    const b64 = Buffer.from(ps, 'utf16le').toString('base64');
+    jiggleProc = cp.spawn('powershell', ['-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-EncodedCommand', b64], { windowsHide: true });
+    jiggleProc.on('error', () => {});
+    jiggleProc.on('exit', () => (jiggleProc = null));
+  } catch (e) {
+    jiggleProc = null;
+  }
+}
+
+function stopJiggle() {
+  if (jiggleProc) { killProc(jiggleProc); jiggleProc = null; }
+}
+
+// Strona pokazywana w latającym oknie „DVD” (okno-dziecko).
+const DVD_LINES = [
+  'Twój kod jest u mnie. Miłego dnia. 😈',
+  'To okno cię obserwuje 👀',
+  'Nie uciekniesz. Ono też nie.',
+  'Hardcore mode: ON',
+  'Złap mnie, jeśli potrafisz 🏃',
+  'PANIC: Ctrl+Alt+Shift+0',
+];
+function showDvdPage() {
+  const panel = vscode.window.createWebviewPanel(
+    'trollCode.dvdpage',
+    '😈 MISCHIEF',
+    { viewColumn: vscode.ViewColumn.One, preserveFocus: false },
+    { enableScripts: true }
+  );
+  const nonce = Math.random().toString(36).slice(2);
+  const line = pick(DVD_LINES);
+  panel.webview.html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';">
+<style>
+  @keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  html,body{margin:0;height:100%;overflow:hidden;font-family:'Segoe UI',sans-serif;color:#fff}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+       background:linear-gradient(120deg,#7b2ff7,#ff3b9a,#ff9f1a,#3ddc84,#3b8cff,#7b2ff7);
+       background-size:400% 400%;animation:bg 8s ease infinite}
+  .face{font-size:22vh;animation:pop 1.2s ease-in-out infinite;filter:drop-shadow(0 8px 20px rgba(0,0,0,.4))}
+  h1{font-size:6vh;margin:1vh 0 0;text-shadow:0 3px 10px rgba(0,0,0,.4)}
+  p{font-size:3vh;opacity:.95;margin-top:2vh;max-width:80vw}
+  .small{position:fixed;bottom:3vh;font-size:2vh;opacity:.8}
+</style></head>
+<body>
+  <div class="face">😈</div>
+  <h1>MISCHIEF MODE</h1>
+  <p id="line">${line}</p>
+  <div class="small">🛑 PANIC: Ctrl+Alt+Shift+0 &nbsp;•&nbsp; zamknij to okno: Ctrl+Shift+W</div>
+  <script nonce="${nonce}">
+    const lines=${JSON.stringify(DVD_LINES)};
+    const el=document.getElementById('line');
+    setInterval(()=>{ el.textContent = lines[Math.floor(Math.random()*lines.length)]; }, 2500);
+  </script>
+</body></html>`;
+  vscode.commands.executeCommand('workbench.action.maximizeEditorHideSidebar').then(undefined, () => {});
+}
+
 // Po wyjściu z Hardcore: cofamy zoom interfejsu/czcionki (to komendy, nie ustawienia)
 // i kasujemy flagę negatywu. Same kolory wracają przez restoreSettings().
 function resetHardcoreUi() {
-  inverted = false;
   vscode.commands.executeCommand('workbench.action.zoomReset').then(undefined, () => {});
   vscode.commands.executeCommand('editor.action.fontZoomReset').then(undefined, () => {});
   vscode.commands.executeCommand('workbench.action.evenEditorWidths').then(undefined, () => {});
@@ -2206,6 +2262,7 @@ function deactivate() {
   stopTimers();
   stopBeep();
   stopDvd();
+  stopJiggle();
   removeTrollBreakpoints();
   return restoreSettings();
 }
