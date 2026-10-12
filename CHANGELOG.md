@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.21.2
+- „DVD”: token „dziecka” zapisywany przed otwarciem okna (nowe okno nie odpala już wtyczki), a mover czeka, aż nowe okno VS Code będzie na wierzchu, i dopiero wtedy nim lata.
+
 ## 1.21.1
 - Naprawione „DVD”: nowe okno otwierane jest teraz przez VS Code (niezawodnie), a PowerShell bierze je z wierzchu i nim lata.
 - Zapobieżono lawinie okien: nowe okno rozpoznaje się jako „dziecko” i nie uruchamia żadnych efektów (wcześniej otwierałoby kolejne okna w nieskończoność).

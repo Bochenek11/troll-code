@@ -1680,10 +1680,11 @@ function stopBeep() {
 // Ubijane przy wyjściu z Hardcore / PANIC (nowe okno zostaje — zamknij je Ctrl+Shift+W).
 function startDvd() {
   if (dvdProc || process.platform !== 'win32') return;
-  // Nowe okno otwieramy z VS Code (niezawodnie); PowerShell bierze je z wierzchu i lata nim.
-  // Token: nowe okno rozpozna się jako „dziecko” i nie uruchomi żadnych efektów.
-  ctx.globalState.update('dvdChildToken', Date.now());
-  vscode.commands.executeCommand('workbench.action.newWindow').then(undefined, () => {});
+  // Token zapisujemy PRZED otwarciem okna (czekamy na zapis), żeby nowe okno zdążyło
+  // rozpoznać się jako „dziecko” i nie uruchomiło żadnych efektów.
+  Promise.resolve(ctx.globalState.update('dvdChildToken', Date.now())).then(() => {
+    vscode.commands.executeCommand('workbench.action.newWindow').then(undefined, () => {});
+  });
   const ps = `
 Add-Type @"
 using System;using System.Runtime.InteropServices;using System.Text;
@@ -1695,11 +1696,16 @@ public class TCWin{
 }
 "@
 Add-Type -AssemblyName System.Windows.Forms
-Start-Sleep -Milliseconds 1200
-$h=[TCWin]::GetForegroundWindow()
-$sb=New-Object System.Text.StringBuilder 300
-[void][TCWin]::GetWindowText($h,$sb,300)
-if(-not $sb.ToString().EndsWith("Visual Studio Code")){ exit }
+# czekamy aż nowe okno VS Code będzie na wierzchu (do ~10 s)
+$h=[IntPtr]::Zero;$n=0
+while($h -eq [IntPtr]::Zero -and $n -lt 50){
+  Start-Sleep -Milliseconds 200;$n++
+  $f=[TCWin]::GetForegroundWindow()
+  $sb=New-Object System.Text.StringBuilder 300
+  [void][TCWin]::GetWindowText($f,$sb,300)
+  if($sb.ToString().EndsWith("Visual Studio Code")){ $h=$f }
+}
+if($h -eq [IntPtr]::Zero){ exit }
 [void][TCWin]::ShowWindow($h,9)
 $scr=[System.Windows.Forms.SystemInformation]::VirtualScreen
 $w=820;$ht=560
